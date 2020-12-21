@@ -1,7 +1,6 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Scanner;
 
 public class Main {
 	static String pionBialy = "\u2659 ";
@@ -80,7 +79,7 @@ public class Main {
 				if (ruch.equalsIgnoreCase("koniec")) {
 					System.out.println("Koniec gry, wygrały czarne");
 					System.exit(0);
-				}	
+				}
 				int a = Integer.parseInt("" + ruch.charAt(0)) + 1;
 				int b = Integer.parseInt("" + ruch.charAt(1)) + 1;
 				int c = Integer.parseInt("" + ruch.charAt(3)) + 1;
@@ -140,7 +139,7 @@ public class Main {
 							plansza[c][d] = pionTmp;
 						t = false;
 					} else {
-						System.out.println("Nieprawidłowa wartość, spróbuj jeszcze raz!");
+						System.out.println("Nieprawidłowe pole, wpisz jeszcze raz!");
 						t = true;
 
 					}
@@ -165,7 +164,7 @@ public class Main {
 				if (ruch.equalsIgnoreCase("koniec")) {
 					System.out.println("Koniec gry, wygrały białe");
 					System.exit(0);
-				}	
+				}
 				int a = Integer.parseInt("" + ruch.charAt(0)) + 1;
 				int b = Integer.parseInt("" + ruch.charAt(1)) + 1;
 				int c = Integer.parseInt("" + ruch.charAt(3)) + 1;
