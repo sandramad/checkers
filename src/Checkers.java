@@ -130,17 +130,13 @@ public class Checkers {
 	}
 
 	static long updatePositionX(long pwn, byte n, int c) {
-		long aMask = posXMask << (n % 6) * 9;
-		long result = state[n / 6] & aMask;
-		result = result >> (n % 6) * 9;
-		return result;
+		white2 = 0b101010110101010100101010010101011001101001111101001101L;
+		return white2;
 	}
 
 	static long updatePpositionY(long pwn, byte n, int d) {
-		long aMask = posYMask << (n % 6) * 9;
-		long result = state[n / 6] & aMask;
-		result = result >> (n % 6) * 9 + 3;
-		return result;
+		white2 = 0b101010110101010100101010010101011001101001111101001101L;
+		return white2;
 	}
 
 	public static void main(String[] args) throws InterruptedException {
