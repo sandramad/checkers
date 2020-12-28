@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.stream.IntStream;
 
 public class Checkers {
 	/*************************************
@@ -9,11 +10,10 @@ public class Checkers {
 	 * game *
 	 *************************************/
 
-
-	static long white1   = 0b101001011101001001101000110101000100101000010101000000L;
-	static long white2   = 0b101010110101010100101010010101010000101001111101001101L;
-	static long black1   = 0b100110010100110000100101111100101101100101011100101001L;
-	static long black2   = 0b100111111100111101100111011100111001100110110100110100L;
+	static long white1 = 0b101001011101001001101000110101000100101000010101000000L;
+	static long white2 = 0b101010110101010100101010010101010000101001111101001101L;
+	static long black1 = 0b100110010100110000100101111100101101100101011100101001L;
+	static long black2 = 0b100111111100111101100111011100111001100110110100110100L;
 	static Long[] state = { white1, white2, black1, black2 };
 
 	static long ifMask = 0b100000000L;
@@ -78,41 +78,19 @@ public class Checkers {
 			System.out.println("ERR: Pion złego koloru");
 			result = false;
 		}
-		if (Math.abs((a % 10) - (b % 10)) == 2 && !isDame(n)) {
+		if (Math.abs((a % 10) - (b % 10)) == 2) {
 			// 35 44 53 -9
 			// 35 46 57 -11
 			// 35 24 13 11
 			// 35 26 17 9
-			if ((a / 10) - (b / 10) == 2 && (a % 10) - (b % 10) == 2) {
-				System.out.println(!moves);
-				System.out.println((a - 11));
-				System.out.println(getN((byte) (a - 11), !moves));
-				updateCaptured(getN((byte) (a - 11), !moves));
-				updatePosition(n, b);
-				result = true;
-			}
-			if ((a / 10) - (b / 10) == 2 && (b % 10) - (a % 10) == 2) {
-				System.out.println(!moves);
-				System.out.println((a + 11));
-				System.out.println(getN((byte) (a + 11), !moves));
-				updatePosition(n, b);
-				result = true;
-			}
-			if ((b / 10) - (a / 10) == 2 && (a % 10) - (b % 10) == 2) {
-				System.out.println(!moves);
-				System.out.println((a - 9));
-				System.out.println(getN((byte) (a - 9), !moves));
-				updateCaptured(getN((byte) (a - 9), !moves));
-				updatePosition(n, b);
-				result = true;
-			}
-			if ((b / 10) - (a / 10) == 2 && (b % 10) - (a % 10) == 2) {
-				System.out.println(!moves);
-				System.out.println((a + 9));
-				System.out.println(getN((byte) (a + 9), !moves));
-				updatePosition(n, b);
-				result = true;
-			}
+			System.out.println(!moves);
+
+			System.out.println((a+b)/2);
+			System.out.println(getN((byte) ((a+b)/2), !moves));
+			updateCaptured(getN((byte) ((a+b)/2), !moves));
+			updatePosition(n, b);
+			result = true;
+
 		} else if (Math.abs((a % 10) - (b % 10)) != 1 && !isDame(n)) {
 			System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole");
 			result = false;
