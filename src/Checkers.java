@@ -9,15 +9,15 @@ public class Checkers {
 	 * game *
 	 *************************************/
 
-	static long white1 = 0b101001011101001001101000110101000100101000010101000000L;
-	static long white2 = 0b101010110101010100101010010101010000101001111101001101L;
-	static long black1 = 0b100110010100110000100101111100101101100101011100101001L;
-	static long black2 = 0b100111111100111101100111011100111001100110110100110100L;
+
+	static long white1   = 0b101001011101001001101000110101000100101000010101000000L;
+	static long white2   = 0b101010110101010100101010010101010000101001111101001101L;
+	static long black1   = 0b100110010100110000100101111100101101100101011100101001L;
+	static long black2   = 0b100111111100111101100111011100111001100110110100110100L;
 	static Long[] state = { white1, white2, black1, black2 };
 
 	static long ifMask = 0b100000000L;
 	static long posXMask = 0b111L;
-	static long posYMask = posXMask << 3;
 
 	public static final String sep = " ";
 
@@ -25,9 +25,8 @@ public class Checkers {
 	static char sqK = '\u2588';
 	static char pwnW = 'O';
 	static char pwnK = 'X';
-	static char dameW = '\u019F';// '\u019F';
-	static char dameK = '\u0416'; // 0416 04fe
-
+	static char dameW = '\u019F';
+	static char dameK = '\u0416';
 // n będzie numerować pionki. 0..11 to dwanaście pionków białych,
 //12..23 to dwanaście pionków czarnych
 
@@ -48,26 +47,154 @@ public class Checkers {
 		return (flag == 1);
 	}
 
-	static void drawEmptyBoard() {
-		System.out.print(sep + " ");
-		for (byte x = 0; x < 8; x++)
-			System.out.print(x + sep);
-		System.out.println();
-		for (byte y = 0; y < 8; y++) {
-			System.out.print(y + sep);
-			for (byte x = 0; x < 8; x++) {
-				if ((x + y) % 2 == 0) {
-					System.out.print(sqW + sep);
-				} else {
-					System.out.print(sqK + sep);
+	static byte getN(byte pos, boolean moves) {
+		byte result = -1;
+		if (moves == true)
+			for (byte i = 0; i < 12; i++) {
+				if (((pos / 10) == positionX(i)) && ((pos % 10) == positionY(i))) {
+					result = i;
+					i = 24; // Break For
 				}
 			}
-			System.out.println(y);
+		else
+			for (byte i = 12; i < 24; i++) {
+				if (((pos / 10) == positionX(i)) && ((pos % 10) == positionY(i))) {
+					result = i;
+					i = 24; // Break For
+				}
+			}
+		return result;
+		// rozdzielenie na kolory - ograniczy wykonywanie pętli
+	}
+
+	static boolean validateMove(byte a, byte b, boolean moves) {
+		boolean result = false;
+
+		byte n = getN(a, moves);
+		if ((n < 0) || (n >= 24)) {
+			System.out.println("ERR: Pole startowe jest puste. \t n: " + n);
+			result = false;
+		} else if ((n / 12 == 0) ^ moves) {
+			System.out.println("ERR: Pion złego koloru");
+			result = false;
 		}
-		System.out.print(sep + " ");
-		for (byte x = 0; x < 8; x++)
-			System.out.print(x + sep);
-		System.out.println();
+		if (Math.abs((a % 10) - (b % 10)) == 2 && !isDame(n)) {
+			// 35 44 53 -9
+			// 35 46 57 -11
+			// 35 24 13 11
+			// 35 26 17 9
+			if ((a / 10) - (b / 10) == 2 && (a % 10) - (b % 10) == 2) {
+				System.out.println(!moves);
+				System.out.println((a - 11));
+				System.out.println(getN((byte) (a - 11), !moves));
+				updateCaptured(getN((byte) (a - 11), !moves));
+				updatePosition(n, b);
+				result = true;
+			}
+			if ((a / 10) - (b / 10) == 2 && (b % 10) - (a % 10) == 2) {
+				System.out.println(!moves);
+				System.out.println((a + 11));
+				System.out.println(getN((byte) (a + 11), !moves));
+				updatePosition(n, b);
+				result = true;
+			}
+			if ((b / 10) - (a / 10) == 2 && (a % 10) - (b % 10) == 2) {
+				System.out.println(!moves);
+				System.out.println((a - 9));
+				System.out.println(getN((byte) (a - 9), !moves));
+				updateCaptured(getN((byte) (a - 9), !moves));
+				updatePosition(n, b);
+				result = true;
+			}
+			if ((b / 10) - (a / 10) == 2 && (b % 10) - (a % 10) == 2) {
+				System.out.println(!moves);
+				System.out.println((a + 9));
+				System.out.println(getN((byte) (a + 9), !moves));
+				updatePosition(n, b);
+				result = true;
+			}
+		} else if (Math.abs((a % 10) - (b % 10)) != 1 && !isDame(n)) {
+			System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole");
+			result = false;
+		} else if ((a / 10) - (b / 10) != 1 && moves == true && !isDame(getN(a, moves))) {
+			System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole");
+			result = false;
+		} else if ((b / 10) - (a / 10) != 1 && moves == false && !isDame(getN(a, moves))) {
+			System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole");
+			result = false;
+		} else if (a / 10 < 0) {
+			System.out.println("ERR: Pole startowe ma X < 0 \t X = " + (a / 10));
+			result = false;
+		} else if (a / 10 > 7) {
+			System.out.println("ERR: Pole startowe ma X > 7 \t X = " + (a / 10));
+			result = false;
+		} else if (a % 10 > 7) {
+			System.out.println("ERR: Pole startowe ma Y > 7 \t Y = " + (a % 10));
+			result = false;
+		} else if (((a / 10) + (a % 10)) % 2 == 1) {
+			System.out.println("ERR: Pole startowe jest czarne \t " + a);
+			result = false;
+		} else if (b / 10 < 0) {
+			System.out.println("ERR: Pole docelowe ma X < 0 \t X = " + (b / 10));
+			result = false;
+		} else if (b / 10 > 7) {
+			System.out.println("ERR: Pole docelowe ma X > 7 \t X = " + (b / 10));
+			result = false;
+		} else if (b % 10 > 7) {
+			System.out.println("ERR: Pole docelowe ma Y > 7 \t Y = " + (b % 10));
+			result = false;
+		} else if (((b / 10) + (b % 10)) % 2 == 1) {
+			System.out.println("ERR: Pole docelowe jest czarne \t " + b);
+			result = false;
+		}
+
+		n = getN(b, moves);
+		if ((n >= 0) && (n < 24) && result == false) {
+			System.out.println("ERR: Pole docelowe nie jest puste. \t n: " + n);
+			result = false;
+		} else {
+			result = true;
+		}
+
+		if (b % 10 == 7 && moves == true) {
+			updateDame(getN(a, moves));
+			result = true;
+		}
+		if (b % 10 == 0 && moves == false) {
+			updateDame(getN(a, moves));
+			result = true;
+		}
+		return result;
+	} // end validateMove
+
+	static void updatePosition(byte n, byte pos) {
+		long apos = positionX(n);
+		apos = apos << (n % 6) * 9;
+		state[n / 6] = state[n / 6] - apos;
+
+		apos = pos / 10;
+		apos = apos << (n % 6) * 9;
+		state[n / 6] = state[n / 6] + apos;
+
+		apos = positionY(n);
+		apos = apos << ((n % 6) * 9 + 3);
+		state[n / 6] = state[n / 6] - apos;
+
+		apos = pos % 10;
+		apos = apos << ((n % 6) * 9 + 3);
+		state[n / 6] = state[n / 6] + apos;
+	} // end updatePosition
+
+	static void updateDame(byte n) {
+		long apos = 1 << (n % 6) * 9 + 7;
+		state[n / 6] = state[n / 6] + apos;
+
+	}
+
+	static void updateCaptured(byte n) {
+		long apos = 1 << (n % 6) * 9 + 8;
+		state[n / 6] = state[n / 6] + apos;
+
 	}
 
 	static void drawBoard() {
@@ -123,24 +250,17 @@ public class Checkers {
 	}
 
 	static long positionY(byte n) {
-		long aMask = posYMask << (n % 6) * 9;
+		long aMask = (posXMask << 3) << (n % 6) * 9;
 		long result = state[n / 6] & aMask;
 		result = result >> (n % 6) * 9 + 3;
 		return result;
 	}
-
-	static long updatePositionX(long pwn, byte n, int c) {
-		white2 = 0b101010110101010100101010010101011001101001111101001101L;
-		return white2;
-	}
-
-	static long updatePpositionY(long pwn, byte n, int d) {
-		white2 = 0b101010110101010100101010010101011001101001111101001101L;
-		return white2;
-	}
+//	static long updatePposition(byte n, byte b) {
+//		white2 = 0b101010110101010100101010010101011001101001111101001101L;
+//		return white2;
+//	}
 
 	public static void main(String[] args) throws InterruptedException {
-		drawEmptyBoard();
 		String nameW = "";
 		String nameK = "";
 		boolean game = true;
@@ -167,105 +287,26 @@ public class Checkers {
 		System.out.println(
 				"Pozycję podawaj parami współrzędnych - z jakiej pozycji chcesz się ruszyć na jaką np. \"02 13\"");
 		while (game) {
-			if (moves) {
-				System.out.print(nameW + " ruch: ");
-				String move = "";
-				try {
-					move = sc.readLine();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				if (move.equalsIgnoreCase("koniec")) {
-					System.out.println("Koniec gry, wygrały czarne");
-					System.exit(0);
-				}
-				int a = Integer.parseInt("" + move.charAt(0));
-				int b = Integer.parseInt("" + move.charAt(1));
-				int c = Integer.parseInt("" + move.charAt(3));
-				int d = Integer.parseInt("" + move.charAt(4));
-				if (possible(a, b, c, d, moves)) {
-					System.out.println("Ruch z: " + a + " " + b + " na: " + c + " " + d);
-					moves = false;
-				}
-			} else {
-				System.out.print(nameK + " ruch: ");
-				String move = "";
-				try {
-					move = sc.readLine();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				if (move.equalsIgnoreCase("koniec")) {
-					System.out.println("Koniec gry, wygrały białe");
-					System.exit(0);
-				}
-				int a = Integer.parseInt("" + move.charAt(0));
-				int b = Integer.parseInt("" + move.charAt(1));
-				int c = Integer.parseInt("" + move.charAt(3));
-				int d = Integer.parseInt("" + move.charAt(4));
-				if (possible(a, b, c, d, moves)) {
-					System.out.println("Ruch z: " + a + " " + b + " na: " + c + " " + d);
-					moves = true;
-				}
+			if (moves)
+				System.out.print("Ruch " + nameW);
+			else
+				System.out.print("Ruch " + nameK);
+			System.out.print(", wpisz parę: ");
+			String ab = "";
+			try {
+				ab = sc.readLine();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
+			byte a = Byte.parseByte(ab.substring(0, 2));
+			byte b = Byte.parseByte(ab.substring(3));
+			if (validateMove(a, b, moves)) {
+				System.out.print("Ruch z pola \t X " + (a / 10) + "  Y " + (a % 10));
+				System.out.print("\t na pole \t X " + (b / 10) + "  Y " + (b % 10) + "\n");
+				updatePosition(getN(a, moves), b);
+				moves = !moves;
+			}
+			drawBoard();
 		}
 	}// end Main
-
-	private static boolean possible(int a, int b, int c, int d, boolean moves) {
-		boolean r = false;
-		if (moves) {
-			for (byte n = 0; n <= 11; n++) {
-				if ((positionX(n) == a) && positionY(n) == b) {
-					if (isDame(n)) {
-						r = true;
-					} else {
-						System.out.println(n);
-						if (d - b == 1 && (a - c == 1 || c - a == 1)) {
-							if (n < 6) {
-								updatePositionX(white1, n, c);
-								updatePositionY(white1, n, d);
-							} else {
-								updatePositionX(white2, n, c);
-								updatePositionY(white2, n, d);
-								white2 = 0b101010110101010100101010010101011001101001111101001101L;
-							}
-
-							state = new Long[] { white1, white2, black1, black2 };
-							drawBoard();
-							r = true;
-						}
-					}
-				}
-			}
-		} else {
-			for (byte n = 12; n <= 23; n++) {
-				if ((positionX(n) == a) && positionY(n) == b) {
-					if (isDame(n)) {
-						r = true;
-					} else {
-						System.out.println(n);
-						if (b - d == 1 && (a - c == 1 || c - a == 1)) {
-							if (n > 6) {
-								updatePositionX(black1, n, c);
-								updatePositionY(black1, n, d);
-							} else {
-								updatePositionX(black2, n, c);
-								updatePositionY(black2, n, d);
-							}
-							state = new Long[] { white1, white2, black1, black2 };
-
-							drawBoard();
-							r = true;
-						}
-					}
-				}
-			}
-		}
-		return r;
-	}
-
-	private static void updatePositionY(long white12, byte n, int d) {
-		// TODO Auto-generated method stub
-
-	}
-}// end Checkers
+} // end Checkers
