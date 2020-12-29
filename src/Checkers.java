@@ -186,11 +186,12 @@ public class Checkers {
 
 	static void updateCaptured(byte n) {
 		long apos = 1 << (n % 6) * 9 + 8;
-		System.out.println(printBits(state[n / 6]) + "\n" + state[n / 6] + "\nzbijam " + n + " " + apos +"\napos: "+printBits(apos));
+		System.out.println(printBits(state[n / 6]) + "\n" + state[n / 6] + "\nzbijam " + n + " " + apos + "\napos: "
+				+ printBits(apos));
 		state[n / 6] = state[n / 6] - apos;
 		System.out.println("po aktualizacji " + state[n / 6]);
 		System.out.println(printBits(state[n / 6]));
-
+		apos = 0;
 	}
 
 	public static String printBits(long value) {
@@ -201,10 +202,10 @@ public class Checkers {
 	}
 
 	static void drawBoard() {
-		System.out.println("białe 1:  "+ printBits(white1));
-		System.out.println("białe 2:  "+ printBits(white2));
-		System.out.println("czarne 1: "+ printBits(black1));
-		System.out.println("czarne 2: "+ printBits(black2));
+		System.out.println("białe 1:  " + printBits(state[0]));
+		System.out.println("białe 2:  " + printBits(state[1]));
+		System.out.println("czarne 1: " + printBits(state[2]));
+		System.out.println("czarne 2: " + printBits(state[3]));
 		System.out.print(sep + " ");
 		for (byte x = 0; x < 8; x++)
 			System.out.print(x + sep);
