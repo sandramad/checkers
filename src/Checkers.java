@@ -9,7 +9,11 @@ public class Checkers {
 	 * black, 1 white * b7 - piece, 0 pawn, 1 dame * b8 - state, 0 captured, 1 in
 	 * game *
 	 *************************************/
-
+	
+	// Starting position of game state longs.
+	// ____________________876543210876543210876543210876543210876543210876543210
+	// ____________________876YYYXXX876YYYXXX876YYYXXX876YYYXXX876YYYXXX876YYYXXX
+	// ______________987654321098765432109876543210987654321098765432109876543210
 	static long white1 = 0b101001011101001001101000110101000100101000010101000000L;
 	static long white2 = 0b101010110101010100101010010101010000101001111101001101L;
 	static long black1 = 0b100110010100110000100101111100101101100101011100101001L;
@@ -79,17 +83,10 @@ public class Checkers {
 			result = false;
 		}
 		if (Math.abs((a % 10) - (b % 10)) == 2) {
-			// 35 44 53 -9
-			// 35 46 57 -11
-			// 35 24 13 11
-			// 35 26 17 9
-			System.out.println(!moves);
-
-			System.out.println((a+b)/2);
-			System.out.println(getN((byte) ((a+b)/2), !moves));
-			updateCaptured(getN((byte) ((a+b)/2), !moves));
-			updatePosition(n, b);
-			result = true;
+			if (captured(a, b, moves) == true)
+				result = true;
+			else
+				result = false;
 
 		} else if (Math.abs((a % 10) - (b % 10)) != 1 && !isDame(n)) {
 			System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole");
@@ -145,6 +142,24 @@ public class Checkers {
 		return result;
 	} // end validateMove
 
+	private static boolean captured(byte a, byte b, boolean moves) {
+		byte n = getN(a, moves);
+		boolean result = false;
+		byte avg = (byte) ((a + b) / 2);
+		System.out.println(!moves);
+
+		System.out.println(avg);
+		System.out.println(getN(avg, !moves));
+		updateCaptured(getN(avg, !moves));
+		if (getN(avg, !moves) > 0) {
+			updatePosition(n, b);
+			result = true;
+		} else {
+			result = false;
+		}
+		return result;
+	}
+
 	static void updatePosition(byte n, byte pos) {
 		long apos = positionX(n);
 		apos = apos << (n % 6) * 9;
@@ -170,11 +185,19 @@ public class Checkers {
 	}
 
 	static void updateCaptured(byte n) {
-		long apos = 1 << (n % 6) * 9 + 8;
-		state[n / 6] = state[n / 6] + apos;
+		long apos = (1 << ((n % 6) * 9 + 8));
+		System.out.println(state[n/6] + "\nzbijam " + n + " " + apos);
+		state[n / 6] = state[n / 6] - apos;
+		System.out.println("po aktualizacji " + state[n/6]);
+		System.out.println(printBits(state[n/6]));
 
 	}
-
+	public static String printBits(long value) {
+        StringBuffer sb = new StringBuffer();
+        for (int shift = 63; shift >= 0; shift--)
+            sb.append((((value >>> shift) & 01) != 0) ? "1" : "0");
+        return sb.toString();
+    }
 	static void drawBoard() {
 		System.out.print(sep + " ");
 		for (byte x = 0; x < 8; x++)
@@ -187,7 +210,7 @@ public class Checkers {
 			for (byte x = 0; x < 8; x++) {
 				if ((x + y) % 2 == 0) {
 					for (n = 0; n <= 23; n++) {
-						if ((positionX(n) == x) && positionY(n) == y) {
+						if ((positionX(n) == x) && positionY(n) == y && isInGame(n)) {
 							if (n / 12 == 0) {
 								if (isDame(n)) {
 									System.out.print(dameW + sep);
