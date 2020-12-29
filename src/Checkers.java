@@ -9,7 +9,7 @@ public class Checkers {
 	 * black, 1 white * b7 - piece, 0 pawn, 1 dame * b8 - state, 0 captured, 1 in
 	 * game *
 	 *************************************/
-	
+
 	// Starting position of game state longs.
 	// ____________________876543210876543210876543210876543210876543210876543210
 	// ____________________876YYYXXX876YYYXXX876YYYXXX876YYYXXX876YYYXXX876YYYXXX
@@ -186,18 +186,20 @@ public class Checkers {
 
 	static void updateCaptured(byte n) {
 		long apos = (1 << ((n % 6) * 9 + 8));
-		System.out.println(state[n/6] + "\nzbijam " + n + " " + apos);
+		System.out.println(printBits(state[n / 6]) + "\n" + state[n / 6] + "\nzbijam " + n + " " + apos +"\napos: "+printBits(apos));
 		state[n / 6] = state[n / 6] - apos;
-		System.out.println("po aktualizacji " + state[n/6]);
-		System.out.println(printBits(state[n/6]));
+		System.out.println("po aktualizacji " + state[n / 6]);
+		System.out.println(printBits(state[n / 6]));
 
 	}
+
 	public static String printBits(long value) {
-        StringBuffer sb = new StringBuffer();
-        for (int shift = 63; shift >= 0; shift--)
-            sb.append((((value >>> shift) & 01) != 0) ? "1" : "0");
-        return sb.toString();
-    }
+		StringBuffer sb = new StringBuffer();
+		for (int shift = 63; shift >= 0; shift--)
+			sb.append((((value >>> shift) & 01) != 0) ? "1" : "0");
+		return sb.toString();
+	}
+
 	static void drawBoard() {
 		System.out.print(sep + " ");
 		for (byte x = 0; x < 8; x++)
