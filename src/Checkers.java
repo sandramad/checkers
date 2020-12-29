@@ -201,8 +201,8 @@ public class Checkers {
 	}
 
 	static void drawBoard() {
-		System.out.println("białe 1: "+ printBits(white1));
-		System.out.println("białe 2: "+ printBits(white2));
+		System.out.println("białe 1:  "+ printBits(white1));
+		System.out.println("białe 2:  "+ printBits(white2));
 		System.out.println("czarne 1: "+ printBits(black1));
 		System.out.println("czarne 2: "+ printBits(black2));
 		System.out.print(sep + " ");
