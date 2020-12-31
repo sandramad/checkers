@@ -98,8 +98,8 @@ public class Checkers {
 			if (captured(a, b, moves) == true)
 				result = true;
 			else {
-				result = false;
 				System.out.println("ERR: Nieudane bicie");
+				result = false;
 			}
 		} else if (Math.abs((a % 10) - (b % 10)) != 1 && !isDame(n)) {
 			System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole 1");
@@ -171,13 +171,14 @@ public class Checkers {
 		byte n = getN(a, moves);
 		boolean result = false;
 		byte avg = (byte) ((a + b) / 2);
-		if (getN(avg, !moves) > 0) {
-			updateCaptured(getN(avg, !moves));
+		if (getN(avg, !moves) > 0 && updateCaptured(getN(avg, !moves))) {
 			updatePosition(n, b);
 			result = true;
 		} else {
 			result = false;
 		}
+		System.out.println("captured: "+ result);
+
 		return result;
 	}
 
@@ -205,10 +206,16 @@ public class Checkers {
 
 	} // end updateDame
 
-	static void updateCaptured(byte n) {
+	static boolean updateCaptured(byte n) {
+		boolean result = false;
 		long aposs = (ifMask << ((n % 6) * 9));
-		state[n / 6] = state[n / 6] - aposs;
-		aposs = 0;
+		if (aposs>128) {
+			state[n / 6] = state[n / 6] - aposs;
+			result = true;
+		}
+		System.out.println("updateCaptured: "+ result);
+		return result;
+
 	} // end updateCaptured
 
 	public static String printBits(long value) {
@@ -360,6 +367,7 @@ public class Checkers {
 		boolean game = true;
 		boolean moves = true;
 		boolean captured = true;
+		String color = "";
 
 		BufferedReader sc = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println("Wpisz kto gra białymi:");
@@ -382,10 +390,14 @@ public class Checkers {
 		System.out.println(
 				"Pozycję podawaj parami współrzędnych - z jakiej pozycji chcesz się ruszyć na jaką np. \"02 13\"");
 		while (game) {
-			if (moves)
+			if (moves) {
 				System.out.print("Ruch " + nameW);
-			else
+				color = "białych";
+			}
+			else {
 				System.out.print("Ruch " + nameK);
+				color = "czarnych";
+			}
 			System.out.print(", wpisz parę: ");
 			String ab = null;
 			try {
@@ -394,7 +406,6 @@ public class Checkers {
 				e.printStackTrace();
 			}
 			if (ab.equalsIgnoreCase("koniec")) {
-				String color = "";
 				if (!moves)
 					color = "białe";
 				else
@@ -414,12 +425,12 @@ public class Checkers {
 						captured = true;
 			}
 			if (validateMove(a, b, moves) && captured == true) {
-				System.out.print("Ruch z pola \t X " + (a / 10) + "  Y " + (a % 10));
-				System.out.print("\t na pole \t X " + (b / 10) + "  Y " + (b % 10) + "\n");
+				System.out.print("Ruch "+ color +" z pola X: " + (a / 10) + "  Y: " + (a % 10));
+				System.out.println("\tna pole X: " + (b / 10) + "  Y: " + (b % 10));
 				updatePosition(getN(a, moves), b);
 				moves = !moves;
 				drawBoard();
-				if (isCapture(moves).length() > 3)
+				if (isCapture(moves).length() > 2)
 					System.out.println("Możliwe bicia na polach: " + isCapture(moves));
 				if (isCapture(moves).length() == 3)
 					System.out.println("Możliwe bicie na polu: " + isCapture(moves));
