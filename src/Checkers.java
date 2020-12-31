@@ -94,43 +94,56 @@ public class Checkers {
 			System.out.println("ERR: Pion złego koloru");
 			result = false;
 		}
-		if (Math.abs((a % 10) - (b % 10)) == 2) {
+		if (Math.abs((a % 10) - (b % 10)) == 2 && isCapture(moves).length() > 2) {
 			if (captured(a, b, moves) == true)
 				result = true;
-			else
+			else {
 				result = false;
-
+				System.out.println("ERR: Nieudane bicie");
+			}
 		} else if (Math.abs((a % 10) - (b % 10)) != 1 && !isDame(n)) {
-			System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole");
+			System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole 1");
 			result = false;
-		} else if ((a / 10) - (b / 10) != 1 && moves == true && !isDame(getN(a, moves))) {
-			System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole");
+		} else if ((b % 10) - (a % 10) != 1 && moves == true && !isDame(getN(a, moves))) {
+			System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole 2");
 			result = false;
-		} else if ((b / 10) - (a / 10) != 1 && moves == false && !isDame(getN(a, moves))) {
-			System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole");
+		} else if ((a % 10) - (b % 10) != 1 && moves == false && !isDame(getN(a, moves))) {
+			System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole 3");
 			result = false;
-		} else if (a / 10 < 0) {
+		}
+		if (a / 10 < 0) {
 			System.out.println("ERR: Pole startowe ma X < 0 \t X = " + (a / 10));
 			result = false;
 		} else if (a / 10 > 7) {
 			System.out.println("ERR: Pole startowe ma X > 7 \t X = " + (a / 10));
 			result = false;
+		}
+		if (a % 10 < 0) {
+			System.out.println("ERR: Pole startowe ma Y < 0 \t Y = " + (a % 10));
+			result = false;
 		} else if (a % 10 > 7) {
 			System.out.println("ERR: Pole startowe ma Y > 7 \t Y = " + (a % 10));
 			result = false;
-		} else if (((a / 10) + (a % 10)) % 2 == 1) {
+		}
+		if (((a / 10) + (a % 10)) % 2 == 1) {
 			System.out.println("ERR: Pole startowe jest czarne \t " + a);
 			result = false;
-		} else if (b / 10 < 0) {
+		}
+		if (b / 10 < 0) {
 			System.out.println("ERR: Pole docelowe ma X < 0 \t X = " + (b / 10));
 			result = false;
 		} else if (b / 10 > 7) {
 			System.out.println("ERR: Pole docelowe ma X > 7 \t X = " + (b / 10));
 			result = false;
+		}
+		if (b % 10 < 0) {
+			System.out.println("ERR: Pole docelowe ma Y < 0 \t Y = " + (b % 10));
+			result = false;
 		} else if (b % 10 > 7) {
 			System.out.println("ERR: Pole docelowe ma Y > 7 \t Y = " + (b % 10));
 			result = false;
-		} else if (((b / 10) + (b % 10)) % 2 == 1) {
+		}
+		if (((b / 10) + (b % 10)) % 2 == 1) {
 			System.out.println("ERR: Pole docelowe jest czarne \t " + b);
 			result = false;
 		}
@@ -158,11 +171,8 @@ public class Checkers {
 		byte n = getN(a, moves);
 		boolean result = false;
 		byte avg = (byte) ((a + b) / 2);
-		System.out.println("captured, kto ruch? \t" + moves);
-		System.out.println("captured, pole bite: \t" + avg);
-		System.out.println("captured, nr bitego: \t" + getN(avg, !moves));
-		updateCaptured(getN(avg, !moves));
 		if (getN(avg, !moves) > 0) {
+			updateCaptured(getN(avg, !moves));
 			updatePosition(n, b);
 			result = true;
 		} else {
@@ -193,19 +203,13 @@ public class Checkers {
 		long apos = 1 << (n % 6) * 9 + 7;
 		state[n / 6] = state[n / 6] + apos;
 
-	}
+	} // end updateDame
 
 	static void updateCaptured(byte n) {
-		System.out.println("updateCaptured, n:\t" + n);
-		long shift = (n % 6) * 9;
-		System.out.println("updateCaptured, shift:\t" + shift);
 		long aposs = (ifMask << ((n % 6) * 9));
-		System.out.println(
-				"updateCaptured, state:\t" + printBits(state[n / 6]) + "\nupdateCaptured, aposs:\t" + printBits(aposs));
 		state[n / 6] = state[n / 6] - aposs;
-		System.out.println("updateCaptured, stat':\t" + printBits(state[n / 6]));
 		aposs = 0;
-	}
+	} // end updateCaptured
 
 	public static String printBits(long value) {
 		StringBuffer sb = new StringBuffer();
@@ -227,72 +231,67 @@ public class Checkers {
 		return true;
 	}
 
-	static void isCapture(boolean moves) {
-		// boolean result;
+	static String isCapture(boolean moves) {
+		String results = "";
 		if (moves)
 			for (byte i = 0; i < 12; i++) // white
 			{
 				if (isInGame(i)) {
 					if ((positionX(i) - 2 >= 0) && (positionY(i) - 2 >= 0)) {
-						if (getN((byte) (position(i) - 11)) >= 12 && isEmpty((byte) (position(i) - 22))) {
-							System.out.println("UpL Możliwe jest bicie z pola " + position(i));
-						}
+						if (getN((byte) (position(i) - 11)) >= 12 && isEmpty((byte) (position(i) - 22)))
+							results += position(i) + " ";
 					}
 					if ((positionX(i) + 2 <= 7) && (positionY(i) - 2 >= 0)) {
-						if (getN((byte) (position(i) + 9)) >= 12 && isEmpty((byte) (position(i) + 18))) {
-							System.out.println("UpR Możliwe jest bicie z pola " + position(i));
-						}
+						if (getN((byte) (position(i) + 9)) >= 12 && isEmpty((byte) (position(i) + 18)))
+							results += position(i) + " ";
 					}
 					if ((positionX(i) - 2 >= 0) && (positionY(i) + 2 <= 7)) {
-						if (getN((byte) (position(i) - 9)) >= 12 && isEmpty((byte) (position(i) - 18))) {
-							System.out.println("DnL Możliwe jest bicie z pola " + position(i));
-						}
+						if (getN((byte) (position(i) - 9)) >= 12 && isEmpty((byte) (position(i) - 18)))
+							results += position(i) + " ";
 					}
 					if ((positionX(i) + 2 <= 7) && (positionY(i) + 2 <= 7)) {
-						if (getN((byte) (position(i) + 11)) >= 12 && isEmpty((byte) (position(i) + 22))) {
-							System.out.println("DnR Możliwe jest bicie z pola " + position(i));
-						}
+						if (getN((byte) (position(i) + 11)) >= 12 && isEmpty((byte) (position(i) + 22)))
+							results += position(i) + " ";
 					}
 				}
 			} // end for
-		else {
-			// black
+		else
 			for (byte i = 12; i < 24; i++) {
 				if (isInGame(i)) {
 					if ((positionX(i) - 2 >= 0) && (positionY(i) - 2 >= 0)) {
 						if (getN((byte) (position(i) - 11)) >= 0 && getN((byte) (position(i) - 11)) < 12
-								&& isEmpty((byte) (position(i) - 22))) {
-							System.out.println("UpL Możliwe jest bicie z pola " + position(i));
-						}
+								&& isEmpty((byte) (position(i) - 22)))
+							results += position(i) + " ";
+
 					}
 					if ((positionX(i) + 2 <= 7) && (positionY(i) - 2 >= 0)) {
 						if (getN((byte) (position(i) + 9)) >= 0 && getN((byte) (position(i) + 9)) < 12
-								&& isEmpty((byte) (position(i) + 18))) {
-							System.out.println("UpR Możliwe jest bicie z pola " + position(i));
-						}
+								&& isEmpty((byte) (position(i) + 18)))
+							results += position(i) + " ";
+
 					}
 					if ((positionX(i) - 2 >= 0) && (positionY(i) + 2 <= 7)) {
 						if (getN((byte) (position(i) - 9)) >= 0 && getN((byte) (position(i) - 9)) < 12
-								&& isEmpty((byte) (position(i) - 18))) {
-							System.out.println("DnL Możliwe jest bicie z pola " + position(i));
-						}
+								&& isEmpty((byte) (position(i) - 18)))
+							results += position(i) + " ";
+
 					}
 					if ((positionX(i) + 2 <= 7) && (positionY(i) + 2 <= 7)) {
 						if (getN((byte) (position(i) + 11)) >= 0 && getN((byte) (position(i) + 11)) < 12
-								&& isEmpty((byte) (position(i) + 22))) {
-							System.out.println("DnR Możliwe jest bicie z pola " + position(i));
-						}
+								&& isEmpty((byte) (position(i) + 22)))
+							results += position(i) + " ";
+
 					}
 				}
 			} // end for
-		}
+		return results;
 	}
 
 	static void drawBoard() {
-		System.out.println("białe 1:  \t" + printBits(state[0]));
-		System.out.println("białe 2:  \t" + printBits(state[1]));
-		System.out.println("czarne 1: \t" + printBits(state[2]));
-		System.out.println("czarne 2: \t" + printBits(state[3]));
+//		System.out.println("białe 1:  \t" + printBits(state[0]));
+//		System.out.println("białe 2:  \t" + printBits(state[1]));
+//		System.out.println("czarne 1: \t" + printBits(state[2]));
+//		System.out.println("czarne 2: \t" + printBits(state[3]));
 		System.out.print(sep + " ");
 		for (byte x = 0; x < 8; x++)
 			System.out.print(x + sep);
@@ -323,9 +322,8 @@ public class Checkers {
 					}
 					if (n == 24)
 						System.out.print(sqW + sep); // przeszedł po wszystkich n i nie znalazł pionka
-				} else { // współrzędne w sumie nieparzyste, więc pole jest czarne
+				} else
 					System.out.print(sqK + sep);
-				}
 			}
 			System.out.println(y);
 		}
@@ -355,16 +353,13 @@ public class Checkers {
 		byte result = (byte) (10 * positionX(n) + positionY(n));
 		return result;
 	}
-//		static long updatePposition(byte n, byte b) {
-//			white2 = 0b101010110101010100101010010101011001101001111101001101L;
-//			return white2;
-//		}
 
 	public static void main(String[] args) throws InterruptedException {
 		String nameW = "";
 		String nameK = "";
 		boolean game = true;
 		boolean moves = true;
+		boolean captured = true;
 
 		BufferedReader sc = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println("Wpisz kto gra białymi:");
@@ -392,25 +387,45 @@ public class Checkers {
 			else
 				System.out.print("Ruch " + nameK);
 			System.out.print(", wpisz parę: ");
-			String ab = "";
+			String ab = null;
 			try {
 				ab = sc.readLine();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			if (ab.equalsIgnoreCase("koniec")) {
+				String color = "";
+				if (!moves)
+					color = "białe";
+				else
+					color = "czarne";
+				System.out.println("Koniec gry, wygrały " + color);
+				System.exit(0);
+			}
+
 			byte a = Byte.parseByte(ab.substring(0, 2));
 			byte b = Byte.parseByte(ab.substring(3));
-			byte n = 0;
-			int tmp = 0;
-			byte[] capture = new byte[12];
-			if (validateMove(a, b, moves)) {
+
+			if (isCapture(moves).length() > 2) {
+				captured = false;
+				String[] must = isCapture(moves).substring(0, (isCapture(moves).length() - 1)).split(" ");
+				for (byte i = 0; i < must.length && captured == false; i++)
+					if (a == Byte.parseByte(must[i]))
+						captured = true;
+			}
+			if (validateMove(a, b, moves) && captured == true) {
 				System.out.print("Ruch z pola \t X " + (a / 10) + "  Y " + (a % 10));
 				System.out.print("\t na pole \t X " + (b / 10) + "  Y " + (b % 10) + "\n");
 				updatePosition(getN(a, moves), b);
 				moves = !moves;
-			}
-			drawBoard();
+				drawBoard();
+				if (isCapture(moves).length() > 3)
+					System.out.println("Możliwe bicia na polach: " + isCapture(moves));
+				if (isCapture(moves).length() == 3)
+					System.out.println("Możliwe bicie na polu: " + isCapture(moves));
+			} else
+				System.out.println("Bicia są obowiązkowe");
 			isCapture(moves);
-		}
+		} // end while
 	}// end Main
 } // end Checkers
