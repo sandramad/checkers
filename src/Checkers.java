@@ -5,15 +5,10 @@ import java.util.stream.IntStream;
 
 public class Checkers {
 	/*************************************
-	 * b0 b1 b2 - X position, 0..7 * b3 b4 b5 - Y position, 0..7 * b6 - color, 0
-	 * black, 1 white * b7 - piece, 0 pawn, 1 dame * b8 - state, 0 captured, 1 in
-	 * game *
+	 * b0 b1 b2 - X position, 0..7 b3 b4 b5 - Y position, 0..7 b6 - color, 0 black,
+	 * 1 white b7 - piece, 0 pawn, 1 dame b8 - state, 0 captured, 1 in game
 	 *************************************/
 
-	// Starting position of game state longs.
-	// ____________________876543210876543210876543210876543210876543210876543210
-	// ____________________876YYYXXX876YYYXXX876YYYXXX876YYYXXX876YYYXXX876YYYXXX
-	// ______________987654321098765432109876543210987654321098765432109876543210
 	static long white1 = 0b101001011101001001101000110101000100101000010101000000L;
 	static long white2 = 0b101010110101010100101010010101010000101001111101001101L;
 	static long black1 = 0b100110010100110000100101111100101101100101011100101001L;
@@ -31,8 +26,8 @@ public class Checkers {
 	static char pwnK = 'X';
 	static char dameW = '\u019F';
 	static char dameK = '\u0416';
-// n będzie numerować pionki. 0..11 to dwanaście pionków białych,
-//12..23 to dwanaście pionków czarnych
+	// n będzie numerować pionki. 0..11 to dwanaście pionków białych,
+	// 12..23 to dwanaście pionków czarnych
 
 	static boolean isInGame(byte n) {
 		long flag = -1L;
@@ -55,14 +50,15 @@ public class Checkers {
 		byte result = -1;
 		if (moves == true)
 			for (byte i = 0; i < 12; i++) {
-				if (((pos / 10) == positionX(i)) && ((pos % 10) == positionY(i))) {
+				if (((pos / 10) == positionX(i)) && ((pos % 10) == positionY(i)) && isInGame(i)) {
 					result = i;
 					i = 24; // Break For
 				}
 			}
 		else
 			for (byte i = 12; i < 24; i++) {
-				if (((pos / 10) == positionX(i)) && ((pos % 10) == positionY(i))) {
+
+				if (((pos / 10) == positionX(i)) && ((pos % 10) == positionY(i)) && isInGame(i)) {
 					result = i;
 					i = 24; // Break For
 				}
@@ -73,12 +69,16 @@ public class Checkers {
 
 	static byte getN(byte pos) {
 		byte result = -1;
+//			System.out.print("getN, isGame(i) \t");
 		for (byte i = 0; i < 24; i++) {
-			if (((pos / 10) == positionX(i)) && ((pos % 10) == positionY(i))) {
+//				System.out.print(isInGame(i) ? "1" : "0");
+//				if (i % 4 == 3) System.out.print(" ");
+			if (((pos / 10) == positionX(i)) && ((pos % 10) == positionY(i)) && isInGame(i)) {
 				result = i;
 				i = 24; // Break For
 			}
 		}
+//			System.out.println();
 		return result;
 		// rozdzielenie na kolory - ograniczy wykonywanie pętli
 	}
@@ -158,10 +158,9 @@ public class Checkers {
 		byte n = getN(a, moves);
 		boolean result = false;
 		byte avg = (byte) ((a + b) / 2);
-		System.out.println(!moves);
-
-		System.out.println(avg);
-		System.out.println(getN(avg, !moves));
+		System.out.println("captured, kto ruch? \t" + moves);
+		System.out.println("captured, pole bite: \t" + avg);
+		System.out.println("captured, nr bitego: \t" + getN(avg, !moves));
 		updateCaptured(getN(avg, !moves));
 		if (getN(avg, !moves) > 0) {
 			updatePosition(n, b);
@@ -197,85 +196,103 @@ public class Checkers {
 	}
 
 	static void updateCaptured(byte n) {
-		long apos = 1 << (n % 6) * 9 + 8;
-		System.out.println(printBits(state[n / 6]) + "\n" + state[n / 6] + "\nzbijam " + n + " " + apos + "\napos: "
-				+ printBits(apos));
-		state[n / 6] = state[n / 6] - apos;
-		System.out.println("po aktualizacji " + state[n / 6]);
-		System.out.println(printBits(state[n / 6]));
-		apos = 0;
+		System.out.println("updateCaptured, n:\t" + n);
+		long shift = (n % 6) * 9;
+		System.out.println("updateCaptured, shift:\t" + shift);
+		long aposs = (ifMask << ((n % 6) * 9));
+		System.out.println(
+				"updateCaptured, state:\t" + printBits(state[n / 6]) + "\nupdateCaptured, aposs:\t" + printBits(aposs));
+		state[n / 6] = state[n / 6] - aposs;
+		System.out.println("updateCaptured, stat':\t" + printBits(state[n / 6]));
+		aposs = 0;
 	}
 
 	public static String printBits(long value) {
 		StringBuffer sb = new StringBuffer();
-		for (int shift = 63; shift >= 0; shift--)
+		for (int shift = 63; shift >= 0; shift--) {
+			if (shift % 9 == 8)
+				sb.append(" ");
 			sb.append((((value >>> shift) & 01) != 0) ? "1" : "0");
+		}
 		return sb.toString();
 	}
 
-	public static boolean isCaptured(byte a, boolean moves) {
-		boolean result = false;
-		byte xRight = 0;
-		byte xLeft = 0;
-		byte xRightEmpty = 0;
-		byte xLeftEmpty = 0;
-		byte yPlus = 0;
-		byte yPlusEmpty = 0;
-		byte yMinus = 0;
-		byte yMinusEmpty = 0;
-		byte posPlusRight = 0;
-		byte posPlusLeft = 0;
-		byte posMinusRight = 0;
-		byte posMinusLeft = 0;
-		byte posPlusRightEmpty = 0;
-		byte posPlusLeftEmpty = 0;
-		byte posMinusRightEmpty = 0;
-		byte posMinusLeftEmpty = 0;
-		yPlus = (byte) (a % 10 + 1);
-		yPlusEmpty = (byte) (a % 10 + 2);
-		yMinus = (byte) (a % 10 - 1);
-		yMinusEmpty = (byte) (a % 10 - 2);
-
-		xRight = (byte) (a / 10 + 1);
-		xLeft = (byte) (a / 10 - 1);
-		xRightEmpty = (byte) (a / 10 + 2);
-		xLeftEmpty = (byte) (a / 10 - 2);
-
-		posPlusRight = (byte) (10 * xRight + yPlus);
-		posPlusLeftEmpty = (byte) (10 * xLeftEmpty + yPlusEmpty);
-		posPlusRightEmpty = (byte) (10 * xRightEmpty + yPlusEmpty);
-		posPlusLeft = (byte) (10 * xLeft + yPlus);
-
-		posMinusRight = (byte) (10 * xRight + yMinus);
-		posMinusLeftEmpty = (byte) (10 * xLeftEmpty + yMinusEmpty);
-		posMinusRightEmpty = (byte) (10 * xRightEmpty + yMinusEmpty);
-		posMinusLeft = (byte) (10 * xLeft + yMinus);
-
-		if ((isInGame(getN(posPlusRight, !moves)) && getN(posPlusRight, !moves) > 0 && getN(posPlusRightEmpty) < 0 && xRightEmpty < 8 && yMinusEmpty >= 0
-				&& yPlusEmpty < 8)
-				|| (isInGame(getN(posPlusLeft, !moves)) && getN(posPlusLeft, !moves) > 0 && getN(posPlusLeftEmpty) < 0 && xLeftEmpty >= 0 && yMinusEmpty >= 0
-						&& yPlusEmpty < 8)
-				|| (isInGame(getN(posMinusRight, !moves)) && getN(posMinusRight, !moves) > 0 && getN(posMinusRightEmpty) < 0 && xRightEmpty < 8
-						&& yMinusEmpty >= 0 && yPlusEmpty < 8)
-				|| (isInGame(getN(posMinusLeft, !moves)) && getN(posMinusLeft, !moves) > 0 && getN(posMinusLeftEmpty) < 0 && xLeftEmpty >= 0 && yMinusEmpty >= 0
-						&& yPlusEmpty < 8)) {
-//			System.out.println(" " + isInGame(getN(posPlusRight, !moves)) + " " + isInGame(getN(posPlusLeft, !moves))
-//					+ " " + isInGame(getN(posMinusRight, !moves)) + " " + isInGame(getN(posMinusLeft, !moves)));
-			result = true;
+	static boolean isEmpty(byte pos) {
+		byte x = (byte) (pos / 10);
+		byte y = (byte) (pos % 10);
+		for (byte i = 0; i < 24; i++) {
+			if (isInGame(i) && x == positionX(i) && y == positionY(i))
+				return false;
 		}
-//		System.out.println("sprawdzam dla " + a + " koloru " + moves + "\t" + getN(posRight, !moves) + " "
-//				+ getN(posRightEmpty) + "\t" + getN(posLeft, !moves) + " " + getN(posLeftEmpty) + " pozycje: " + xRight
-//				+ " " + xLeft + " " + y + " pozycje puste: " + xRightEmpty + " " + xLeftEmpty + " " + yEmpty);
+		return true;
+	}
 
-		return result;
-
+	static void isCapture(boolean moves) {
+		// boolean result;
+		if (moves)
+			for (byte i = 0; i < 12; i++) // white
+			{
+				if (isInGame(i)) {
+					if ((positionX(i) - 2 >= 0) && (positionY(i) - 2 >= 0)) {
+						if (getN((byte) (position(i) - 11)) >= 12 && isEmpty((byte) (position(i) - 22))) {
+							System.out.println("UpL Możliwe jest bicie z pola " + position(i));
+						}
+					}
+					if ((positionX(i) + 2 <= 7) && (positionY(i) - 2 >= 0)) {
+						if (getN((byte) (position(i) + 9)) >= 12 && isEmpty((byte) (position(i) + 18))) {
+							System.out.println("UpR Możliwe jest bicie z pola " + position(i));
+						}
+					}
+					if ((positionX(i) - 2 >= 0) && (positionY(i) + 2 <= 7)) {
+						if (getN((byte) (position(i) - 9)) >= 12 && isEmpty((byte) (position(i) - 18))) {
+							System.out.println("DnL Możliwe jest bicie z pola " + position(i));
+						}
+					}
+					if ((positionX(i) + 2 <= 7) && (positionY(i) + 2 <= 7)) {
+						if (getN((byte) (position(i) + 11)) >= 12 && isEmpty((byte) (position(i) + 22))) {
+							System.out.println("DnR Możliwe jest bicie z pola " + position(i));
+						}
+					}
+				}
+			} // end for
+		else {
+			// black
+			for (byte i = 12; i < 24; i++) {
+				if (isInGame(i)) {
+					if ((positionX(i) - 2 >= 0) && (positionY(i) - 2 >= 0)) {
+						if (getN((byte) (position(i) - 11)) >= 0 && getN((byte) (position(i) - 11)) < 12
+								&& isEmpty((byte) (position(i) - 22))) {
+							System.out.println("UpL Możliwe jest bicie z pola " + position(i));
+						}
+					}
+					if ((positionX(i) + 2 <= 7) && (positionY(i) - 2 >= 0)) {
+						if (getN((byte) (position(i) + 9)) >= 0 && getN((byte) (position(i) + 9)) < 12
+								&& isEmpty((byte) (position(i) + 18))) {
+							System.out.println("UpR Możliwe jest bicie z pola " + position(i));
+						}
+					}
+					if ((positionX(i) - 2 >= 0) && (positionY(i) + 2 <= 7)) {
+						if (getN((byte) (position(i) - 9)) >= 0 && getN((byte) (position(i) - 9)) < 12
+								&& isEmpty((byte) (position(i) - 18))) {
+							System.out.println("DnL Możliwe jest bicie z pola " + position(i));
+						}
+					}
+					if ((positionX(i) + 2 <= 7) && (positionY(i) + 2 <= 7)) {
+						if (getN((byte) (position(i) + 11)) >= 0 && getN((byte) (position(i) + 11)) < 12
+								&& isEmpty((byte) (position(i) + 22))) {
+							System.out.println("DnR Możliwe jest bicie z pola " + position(i));
+						}
+					}
+				}
+			} // end for
+		}
 	}
 
 	static void drawBoard() {
-		System.out.println("białe 1:  " + printBits(state[0]));
-		System.out.println("białe 2:  " + printBits(state[1]));
-		System.out.println("czarne 1: " + printBits(state[2]));
-		System.out.println("czarne 2: " + printBits(state[3]));
+		System.out.println("białe 1:  \t" + printBits(state[0]));
+		System.out.println("białe 2:  \t" + printBits(state[1]));
+		System.out.println("czarne 1: \t" + printBits(state[2]));
+		System.out.println("czarne 2: \t" + printBits(state[3]));
 		System.out.print(sep + " ");
 		for (byte x = 0; x < 8; x++)
 			System.out.print(x + sep);
@@ -313,7 +330,7 @@ public class Checkers {
 			System.out.println(y);
 		}
 
-//Ostatni rząd z numerami kolumn
+		// Ostatni rząd z numerami kolumn
 		System.out.print(sep + " ");
 		for (byte x = 0; x < 8; x++)
 			System.out.print(x + sep);
@@ -338,10 +355,10 @@ public class Checkers {
 		byte result = (byte) (10 * positionX(n) + positionY(n));
 		return result;
 	}
-//	static long updatePposition(byte n, byte b) {
-//		white2 = 0b101010110101010100101010010101011001101001111101001101L;
-//		return white2;
-//	}
+//		static long updatePposition(byte n, byte b) {
+//			white2 = 0b101010110101010100101010010101011001101001111101001101L;
+//			return white2;
+//		}
 
 	public static void main(String[] args) throws InterruptedException {
 		String nameW = "";
@@ -393,39 +410,7 @@ public class Checkers {
 				moves = !moves;
 			}
 			drawBoard();
-			for (byte y = 0; y < 8; y++) {
-				for (byte x = 0; x < 8; x++) {
-					if ((x + y) % 2 == 0) {
-						if (moves)
-							for (n = 0; n < 12; n++) {
-								if (position(n) == (10 * x + y) && isInGame(n)) {
-									if (isCaptured(position(n), moves)) {
-										capture[tmp] = (byte) position(n);
-									}
-								}
-							}
-						else
-							for (n = 12; n < 24; n++) {
-								if (position(n) == (10 * x + y) && isInGame(n)) {
-									if (position(n) == (10 * x + y) && isInGame(n)) {
-										if (isCaptured(position(n), moves)) {
-											capture[tmp] = (byte) position(n);
-											tmp++;
-										}
-									}
-								}
-							}
-					}
-				}
-			}
-			if (capture.length > 0 && capture[0] > 0) {
-				System.out.print("Masz bicie z pola: ");
-				for (byte c : capture) {
-					if (c > 0)
-						System.out.print((c < 10) ? "0" + c + ", " : c + ", ");
-				}
-			}
-
+			isCapture(moves);
 		}
 	}// end Main
 } // end Checkers
