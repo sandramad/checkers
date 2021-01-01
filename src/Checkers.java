@@ -177,7 +177,7 @@ public class Checkers {
 		} else {
 			result = false;
 		}
-		System.out.println("captured: "+ result);
+		System.out.println("captured: " + result);
 
 		return result;
 	}
@@ -209,11 +209,11 @@ public class Checkers {
 	static boolean updateCaptured(byte n) {
 		boolean result = false;
 		long aposs = (ifMask << ((n % 6) * 9));
-		if (aposs>128) {
+		if (aposs > 128) {
 			state[n / 6] = state[n / 6] - aposs;
 			result = true;
 		}
-		System.out.println("updateCaptured: "+ result);
+		System.out.println("updateCaptured: " + result);
 		return result;
 
 	} // end updateCaptured
@@ -393,8 +393,7 @@ public class Checkers {
 			if (moves) {
 				System.out.print("Ruch " + nameW);
 				color = "białych";
-			}
-			else {
+			} else {
 				System.out.print("Ruch " + nameK);
 				color = "czarnych";
 			}
@@ -405,17 +404,20 @@ public class Checkers {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			if (ab.equalsIgnoreCase("koniec")) {
+			if (ab.equalsIgnoreCase("koniec") || ab.length() == 0) {
 				if (!moves)
 					color = "białe";
 				else
 					color = "czarne";
-				System.out.println("Koniec gry, wygrały " + color);
+				System.out.println("Dziękujemy za grę, wygrały " + color);
 				System.exit(0);
 			}
-
+			byte b = 0;
+			if (ab.length() == 4)
+				b = Byte.parseByte(ab.substring(2));
+			else
+				b = Byte.parseByte(ab.substring(3));
 			byte a = Byte.parseByte(ab.substring(0, 2));
-			byte b = Byte.parseByte(ab.substring(3));
 
 			if (isCapture(moves).length() > 2) {
 				captured = false;
@@ -425,7 +427,7 @@ public class Checkers {
 						captured = true;
 			}
 			if (validateMove(a, b, moves) && captured == true) {
-				System.out.print("Ruch "+ color +" z pola X: " + (a / 10) + "  Y: " + (a % 10));
+				System.out.print("Ruch " + color + " z pola X: " + (a / 10) + "  Y: " + (a % 10));
 				System.out.println("\tna pole X: " + (b / 10) + "  Y: " + (b % 10));
 				updatePosition(getN(a, moves), b);
 				moves = !moves;
