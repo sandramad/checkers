@@ -69,101 +69,102 @@ public class Checkers {
 
 	static byte getN(byte pos) {
 		byte result = -1;
-//			System.out.print("getN, isGame(i) \t");
 		for (byte i = 0; i < 24; i++) {
-//				System.out.print(isInGame(i) ? "1" : "0");
-//				if (i % 4 == 3) System.out.print(" ");
 			if (((pos / 10) == positionX(i)) && ((pos % 10) == positionY(i)) && isInGame(i)) {
 				result = i;
 				i = 24; // Break For
 			}
 		}
-//			System.out.println();
 		return result;
-		// rozdzielenie na kolory - ograniczy wykonywanie pętli
 	}
 
 	static boolean validateMove(byte a, byte b, boolean moves) {
 		boolean result = false;
+		boolean err = false;
+		boolean block = false;
 
-		byte n = getN(a, moves);
-		if ((n < 0) || (n >= 24)) {
+		byte n = getN(a);
+		if ((n < 0) || (n > 24)) {
 			System.out.println("ERR: Pole startowe jest puste. \t n: " + n);
-			result = false;
-		} else if ((n / 12 == 0) ^ moves) {
-			System.out.println("ERR: Pion złego koloru");
-			result = false;
+			err = true;
 		}
+		if ((n / 12 == 0) ^ moves) {
+			System.out.println("ERR: Pion złego koloru");
+			err = true;
+		}
+		n = getN(a, moves);
 		if (Math.abs((a % 10) - (b % 10)) == 2 && isCapture(moves).length() > 2) {
 			if (captured(a, b, moves) == true)
-				result = true;
+				block = true;
 			else {
 				System.out.println("ERR: Nieudane bicie");
-				result = false;
+				err = true;
 			}
-		} else if (Math.abs((a % 10) - (b % 10)) != 1 && !isDame(n)) {
+		}
+		System.out.println("block "+block);
+		if (Math.abs((a % 10) - (b % 10)) != 1 && !isDame(n) && block==false) {
 			System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole 1");
-			result = false;
-		} else if ((b % 10) - (a % 10) != 1 && moves == true && !isDame(getN(a, moves))) {
+			err = true;
+		}
+		if ((b % 10) - (a % 10) != 1 && moves == true && !isDame(getN(a, moves)) && block == false) {
 			System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole 2");
-			result = false;
-		} else if ((a % 10) - (b % 10) != 1 && moves == false && !isDame(getN(a, moves))) {
+			err = true;
+		} else if ((a % 10) - (b % 10) != 1 && moves == false && !isDame(getN(a, moves)) && block == false) {
 			System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole 3");
-			result = false;
+			err = true;
 		}
 		if (a / 10 < 0) {
 			System.out.println("ERR: Pole startowe ma X < 0 \t X = " + (a / 10));
-			result = false;
+			err = true;
 		} else if (a / 10 > 7) {
 			System.out.println("ERR: Pole startowe ma X > 7 \t X = " + (a / 10));
-			result = false;
+			err = true;
 		}
 		if (a % 10 < 0) {
 			System.out.println("ERR: Pole startowe ma Y < 0 \t Y = " + (a % 10));
-			result = false;
+			err = true;
 		} else if (a % 10 > 7) {
 			System.out.println("ERR: Pole startowe ma Y > 7 \t Y = " + (a % 10));
-			result = false;
+			err = true;
 		}
 		if (((a / 10) + (a % 10)) % 2 == 1) {
 			System.out.println("ERR: Pole startowe jest czarne \t " + a);
-			result = false;
+			err = true;
 		}
 		if (b / 10 < 0) {
 			System.out.println("ERR: Pole docelowe ma X < 0 \t X = " + (b / 10));
-			result = false;
+			err = true;
 		} else if (b / 10 > 7) {
 			System.out.println("ERR: Pole docelowe ma X > 7 \t X = " + (b / 10));
-			result = false;
+			err = true;
 		}
 		if (b % 10 < 0) {
 			System.out.println("ERR: Pole docelowe ma Y < 0 \t Y = " + (b % 10));
-			result = false;
+			err = true;
 		} else if (b % 10 > 7) {
 			System.out.println("ERR: Pole docelowe ma Y > 7 \t Y = " + (b % 10));
-			result = false;
+			err = true;
 		}
 		if (((b / 10) + (b % 10)) % 2 == 1) {
 			System.out.println("ERR: Pole docelowe jest czarne \t " + b);
-			result = false;
+			err = true;
 		}
 
-		n = getN(b, moves);
-		if ((n >= 0) && (n < 24) && result == false) {
+		n = getN(b);
+		if ((n >= 0) && (n < 24) && err == false && block == false) {
 			System.out.println("ERR: Pole docelowe nie jest puste. \t n: " + n);
+			err = true;
+		}
+		if (b % 10 == 7 && moves == true && err == false) {
+			updateDame(getN(a, moves));
+		}
+		if (b % 10 == 0 && moves == false && err == false) {
+			updateDame(getN(a, moves));
+		}
+		if (err == true)
 			result = false;
-		} else {
+		else
 			result = true;
-		}
-
-		if (b % 10 == 7 && moves == true) {
-			updateDame(getN(a, moves));
-			result = true;
-		}
-		if (b % 10 == 0 && moves == false) {
-			updateDame(getN(a, moves));
-			result = true;
-		}
 		return result;
 	} // end validateMove
 
@@ -414,9 +415,9 @@ public class Checkers {
 			}
 			byte b = 0;
 			if (ab.length() == 4)
-				b = Byte.parseByte(ab.substring(2,4));
+				b = Byte.parseByte(ab.substring(2, 4));
 			else
-				b = Byte.parseByte(ab.substring(3,5));
+				b = Byte.parseByte(ab.substring(3, 5));
 			byte a = Byte.parseByte(ab.substring(0, 2));
 
 			if (isCapture(moves).length() > 2) {
@@ -432,7 +433,7 @@ public class Checkers {
 				updatePosition(getN(a, moves), b);
 				moves = !moves;
 				drawBoard();
-				if (isCapture(moves).length() > 2)
+				if (isCapture(moves).length() > 3)
 					System.out.println("Możliwe bicia na polach: " + isCapture(moves));
 				if (isCapture(moves).length() == 3)
 					System.out.println("Możliwe bicie na polu: " + isCapture(moves));
