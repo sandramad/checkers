@@ -9,14 +9,15 @@ public class Checkers {
 	 * 1 white b7 - piece, 0 pawn, 1 dame b8 - state, 0 captured, 1 in game
 	 *************************************/
 
-//	static long white1 = 0b101001011101001001101000110101000100101000010101000000L;
-//	static long white2 = 0b101010110101010100101010010101010000101001111101001101L;
-//	static long black1 = 0b100110010100110000100101111100101101100101011100101001L;
-//	static long black2 = 0b100111111100111101100111011100111001100110110100110100L;
-	static long white1 = 0b101001011101001001101001101101000100101000010101000000L;
-	static long white2 = 0b001011101101010100101010010001101011101001111001101101L;
-	static long black1 = 0b000010110100110000100101111000100110000100010100100000L;
-	static long black2 = 0b100111111100111101100111011100111001100110110100100110L;
+	static long white1 = 0b101001011101001001101000110101000100101000010101000000L;
+	static long white2 = 0b101010110101010100101010010101010000101001111101001101L;
+	static long black1 = 0b100110010100110000100101111100101101100101011100101001L;
+	static long black2 = 0b100111111100111101100111011100111001100110110100110100L;
+	// ułożenie testujące wielobicia i konwersję na królówkę
+//	static long white1 = 0b101001011101001001101001101101000100101000010101000000L;
+//	static long white2 = 0b001011101101010100101010010001101011101001111001101101L;
+//	static long black1 = 0b000010110100110000100101111000100110000100010100100000L;
+//	static long black2 = 0b100111111100111101100111011100111001100110110100100110L;
 	static Long[] state = { white1, white2, black1, black2 };
 
 	static long ifMask = 0b100000000L;
@@ -203,7 +204,6 @@ public class Checkers {
 
 	static void updateDame(byte n) {
 		long aposs = ((ifMask >> 1) << ((n % 6) * 9));
-		System.out.println("Apos pionka "+n+"\t \t"+ printBits(aposs));
 		state[n / 6] = state[n / 6] + aposs;
 
 	} // end updateDame
@@ -338,10 +338,10 @@ public class Checkers {
 	}
 
 	static void drawBoard() {
-		System.out.println("static long white1 =\t" + printBits(state[0]));
-		System.out.println("static long white2 =\t" + printBits(state[1]));
-		System.out.println("static long black1 =\t" + printBits(state[2]));
-		System.out.println("static long black2 =\t" + printBits(state[3]));
+//		System.out.println("static long white1 =\t" + printBits(state[0])+"L;");
+//		System.out.println("static long white2 =\t" + printBits(state[1])+"L;");
+//		System.out.println("static long black1 =\t" + printBits(state[2])+"L;");
+//		System.out.println("static long black2 =\t" + printBits(state[3])+"L;");
 		System.out.print(sep + " ");
 		for (byte x = 0; x < 8; x++)
 			System.out.print(x + sep);
@@ -466,7 +466,7 @@ public class Checkers {
 				captured = false;
 				String[] must = isCapture(moves).substring(0, (isCapture(moves).length() - 1)).split(" ");
 				for (byte i = 0; i < must.length && captured == false; i++)
-					if (a == Byte.parseByte(must[i]))
+					if (a == Byte.parseByte(must[i]) && Math.abs(a - b) > 16)
 						captured = true;
 			}
 			if (validateMove(a, b, moves) && captured == true) {
