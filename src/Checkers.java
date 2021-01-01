@@ -414,9 +414,9 @@ public class Checkers {
 			}
 			byte b = 0;
 			if (ab.length() == 4)
-				b = Byte.parseByte(ab.substring(2));
+				b = Byte.parseByte(ab.substring(2,4));
 			else
-				b = Byte.parseByte(ab.substring(3));
+				b = Byte.parseByte(ab.substring(3,5));
 			byte a = Byte.parseByte(ab.substring(0, 2));
 
 			if (isCapture(moves).length() > 2) {
