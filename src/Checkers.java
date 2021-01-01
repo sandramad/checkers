@@ -93,24 +93,28 @@ public class Checkers {
 			err = true;
 		}
 		n = getN(a, moves);
-		if (Math.abs((a % 10) - (b % 10)) == 2 && isCapture(moves).length() > 2) {
-			if (captured(a, b, moves) == true)
+		if (Math.abs((a % 10) - (b % 10)) == 2 && Math.abs((a / 10) - (b / 10)) == 2 && isCapture(moves).length() > 1) {
+			if (captured(a, b, moves) == true) {
 				block = true;
-			else {
+				System.out.println("block "+block);
+				if (isCapture(b, moves).length() > 2) {
+					drawBoard();
+					System.out.println("Masz kolejne bocie na polu " + b);
+					err = true;
+				}
+			} else {
 				System.out.println("ERR: Nieudane bicie");
 				err = true;
 			}
 		}
-		System.out.println("block "+block);
-		if (Math.abs((a % 10) - (b % 10)) != 1 && !isDame(n) && block==false) {
-			System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole 1");
+		if (Math.abs((a % 10) - (b % 10)) != 1 && !isDame(n) && block == false) {
+			System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole");
 			err = true;
-		}
-		if ((b % 10) - (a % 10) != 1 && moves == true && !isDame(getN(a, moves)) && block == false) {
-			System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole 2");
+		} else if ((b % 10) - (a % 10) != 1 && moves == true && !isDame(getN(a, moves)) && block == false) {
+			System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole");
 			err = true;
 		} else if ((a % 10) - (b % 10) != 1 && moves == false && !isDame(getN(a, moves)) && block == false) {
-			System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole 3");
+			System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole");
 			err = true;
 		}
 		if (a / 10 < 0) {
@@ -178,8 +182,6 @@ public class Checkers {
 		} else {
 			result = false;
 		}
-		System.out.println("captured: " + result);
-
 		return result;
 	}
 
@@ -214,7 +216,6 @@ public class Checkers {
 			state[n / 6] = state[n / 6] - aposs;
 			result = true;
 		}
-		System.out.println("updateCaptured: " + result);
 		return result;
 
 	} // end updateCaptured
@@ -247,19 +248,19 @@ public class Checkers {
 				if (isInGame(i)) {
 					if ((positionX(i) - 2 >= 0) && (positionY(i) - 2 >= 0)) {
 						if (getN((byte) (position(i) - 11)) >= 12 && isEmpty((byte) (position(i) - 22)))
-							results += position(i) + " ";
+							results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
 					}
 					if ((positionX(i) + 2 <= 7) && (positionY(i) - 2 >= 0)) {
 						if (getN((byte) (position(i) + 9)) >= 12 && isEmpty((byte) (position(i) + 18)))
-							results += position(i) + " ";
+							results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
 					}
 					if ((positionX(i) - 2 >= 0) && (positionY(i) + 2 <= 7)) {
 						if (getN((byte) (position(i) - 9)) >= 12 && isEmpty((byte) (position(i) - 18)))
-							results += position(i) + " ";
+							results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
 					}
 					if ((positionX(i) + 2 <= 7) && (positionY(i) + 2 <= 7)) {
 						if (getN((byte) (position(i) + 11)) >= 12 && isEmpty((byte) (position(i) + 22)))
-							results += position(i) + " ";
+							results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
 					}
 				}
 			} // end for
@@ -269,29 +270,71 @@ public class Checkers {
 					if ((positionX(i) - 2 >= 0) && (positionY(i) - 2 >= 0)) {
 						if (getN((byte) (position(i) - 11)) >= 0 && getN((byte) (position(i) - 11)) < 12
 								&& isEmpty((byte) (position(i) - 22)))
-							results += position(i) + " ";
+							results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
 
 					}
 					if ((positionX(i) + 2 <= 7) && (positionY(i) - 2 >= 0)) {
 						if (getN((byte) (position(i) + 9)) >= 0 && getN((byte) (position(i) + 9)) < 12
 								&& isEmpty((byte) (position(i) + 18)))
-							results += position(i) + " ";
-
+							results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
 					}
 					if ((positionX(i) - 2 >= 0) && (positionY(i) + 2 <= 7)) {
 						if (getN((byte) (position(i) - 9)) >= 0 && getN((byte) (position(i) - 9)) < 12
 								&& isEmpty((byte) (position(i) - 18)))
-							results += position(i) + " ";
-
+							results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
 					}
 					if ((positionX(i) + 2 <= 7) && (positionY(i) + 2 <= 7)) {
 						if (getN((byte) (position(i) + 11)) >= 0 && getN((byte) (position(i) + 11)) < 12
 								&& isEmpty((byte) (position(i) + 22)))
-							results += position(i) + " ";
-
+							results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
 					}
 				}
 			} // end for
+		return results;
+	}
+
+	static String isCapture(byte b, boolean moves) {
+		String results = "";
+		byte i = getN(b, moves);
+		if (moves) {
+			if ((positionX(i) - 2 >= 0) && (positionY(i) - 2 >= 0)) {
+				if (getN((byte) (position(i) - 11)) >= 12 && isEmpty((byte) (position(i) - 22)))
+					results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
+			}
+			if ((positionX(i) + 2 <= 7) && (positionY(i) - 2 >= 0)) {
+				if (getN((byte) (position(i) + 9)) >= 12 && isEmpty((byte) (position(i) + 18)))
+					results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
+			}
+			if ((positionX(i) - 2 >= 0) && (positionY(i) + 2 <= 7)) {
+				if (getN((byte) (position(i) - 9)) >= 12 && isEmpty((byte) (position(i) - 18)))
+					results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
+			}
+			if ((positionX(i) + 2 <= 7) && (positionY(i) + 2 <= 7)) {
+				if (getN((byte) (position(i) + 11)) >= 12 && isEmpty((byte) (position(i) + 22)))
+					results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
+			}
+		} else {
+			if ((positionX(i) - 2 >= 0) && (positionY(i) - 2 >= 0)) {
+				if (getN((byte) (position(i) - 11)) >= 0 && getN((byte) (position(i) - 11)) < 12
+						&& isEmpty((byte) (position(i) - 22)))
+					results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
+			}
+			if ((positionX(i) + 2 <= 7) && (positionY(i) - 2 >= 0)) {
+				if (getN((byte) (position(i) + 9)) >= 0 && getN((byte) (position(i) + 9)) < 12
+						&& isEmpty((byte) (position(i) + 18)))
+					results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
+			}
+			if ((positionX(i) - 2 >= 0) && (positionY(i) + 2 <= 7)) {
+				if (getN((byte) (position(i) - 9)) >= 0 && getN((byte) (position(i) - 9)) < 12
+						&& isEmpty((byte) (position(i) - 18)))
+					results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
+			}
+			if ((positionX(i) + 2 <= 7) && (positionY(i) + 2 <= 7)) {
+				if (getN((byte) (position(i) + 11)) >= 0 && getN((byte) (position(i) + 11)) < 12
+						&& isEmpty((byte) (position(i) + 22)))
+					results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
+			}
+		}
 		return results;
 	}
 
@@ -430,6 +473,8 @@ public class Checkers {
 			if (validateMove(a, b, moves) && captured == true) {
 				System.out.print("Ruch " + color + " z pola X: " + (a / 10) + "  Y: " + (a % 10));
 				System.out.println("\tna pole X: " + (b / 10) + "  Y: " + (b % 10));
+				if ((moves && (b / 10 == 7)) || (!moves && (b / 10 == 0)))
+					updateDame(b);
 				updatePosition(getN(a, moves), b);
 				moves = !moves;
 				drawBoard();
