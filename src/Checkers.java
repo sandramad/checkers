@@ -101,6 +101,9 @@ public class Checkers {
 					drawBoard();
 					System.out.println("Masz kolejne bocie na polu " + b);
 					err = true;
+				} else {
+					if ((moves && (b % 10 == 7)) || (!moves && (b % 10 == 0)))
+						updateDame(b);
 				}
 			} else {
 				System.out.println("ERR: Nieudane bicie");
@@ -158,12 +161,6 @@ public class Checkers {
 		if ((n >= 0) && (n < 24) && err == false && block == false) {
 			System.out.println("ERR: Pole docelowe nie jest puste. \t n: " + n);
 			err = true;
-		}
-		if (b % 10 == 7 && moves == true && err == false) {
-			updateDame(getN(a, moves));
-		}
-		if (b % 10 == 0 && moves == false && err == false) {
-			updateDame(getN(a, moves));
 		}
 		if (err == true)
 			result = false;
@@ -473,7 +470,7 @@ public class Checkers {
 			if (validateMove(a, b, moves) && captured == true) {
 				System.out.print("Ruch " + color + " z pola X: " + (a / 10) + "  Y: " + (a % 10));
 				System.out.println("\tna pole X: " + (b / 10) + "  Y: " + (b % 10));
-				if ((moves && (b / 10 == 7)) || (!moves && (b / 10 == 0)))
+				if ((moves && (b % 10 == 7)) || (!moves && (b % 10 == 0)))
 					updateDame(b);
 				updatePosition(getN(a, moves), b);
 				moves = !moves;
