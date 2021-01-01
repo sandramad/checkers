@@ -9,10 +9,14 @@ public class Checkers {
 	 * 1 white b7 - piece, 0 pawn, 1 dame b8 - state, 0 captured, 1 in game
 	 *************************************/
 
-	static long white1 = 0b101001011101001001101000110101000100101000010101000000L;
-	static long white2 = 0b101010110101010100101010010101010000101001111101001101L;
-	static long black1 = 0b100110010100110000100101111100101101100101011100101001L;
-	static long black2 = 0b100111111100111101100111011100111001100110110100110100L;
+//	static long white1 = 0b101001011101001001101000110101000100101000010101000000L;
+//	static long white2 = 0b101010110101010100101010010101010000101001111101001101L;
+//	static long black1 = 0b100110010100110000100101111100101101100101011100101001L;
+//	static long black2 = 0b100111111100111101100111011100111001100110110100110100L;
+	static long white1 = 0b101001011101001001101001101101000100101000010101000000L;
+	static long white2 = 0b001011101101010100101010010001101011101001111001101101L;
+	static long black1 = 0b000010110100110000100101111000100110000100010100100000L;
+	static long black2 = 0b100111111100111101100111011100111001100110110100100110L;
 	static Long[] state = { white1, white2, black1, black2 };
 
 	static long ifMask = 0b100000000L;
@@ -96,14 +100,11 @@ public class Checkers {
 		if (Math.abs((a % 10) - (b % 10)) == 2 && Math.abs((a / 10) - (b / 10)) == 2 && isCapture(moves).length() > 1) {
 			if (captured(a, b, moves) == true) {
 				block = true;
-				System.out.println("block "+block);
+				System.out.println("block " + block);
 				if (isCapture(b, moves).length() > 2) {
 					drawBoard();
 					System.out.println("Masz kolejne bocie na polu " + b);
 					err = true;
-				} else {
-					if ((moves && (b % 10 == 7)) || (!moves && (b % 10 == 0)))
-						updateDame(b);
 				}
 			} else {
 				System.out.println("ERR: Nieudane bicie");
@@ -201,8 +202,9 @@ public class Checkers {
 	} // end updatePosition
 
 	static void updateDame(byte n) {
-		long apos = 1 << (n % 6) * 9 + 7;
-		state[n / 6] = state[n / 6] + apos;
+		long aposs = ((ifMask >> 1) << ((n % 6) * 9));
+		System.out.println("Apos pionka "+n+"\t \t"+ printBits(aposs));
+		state[n / 6] = state[n / 6] + aposs;
 
 	} // end updateDame
 
@@ -245,19 +247,19 @@ public class Checkers {
 				if (isInGame(i)) {
 					if ((positionX(i) - 2 >= 0) && (positionY(i) - 2 >= 0)) {
 						if (getN((byte) (position(i) - 11)) >= 12 && isEmpty((byte) (position(i) - 22)))
-							results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
+							results += (position(i) < 10) ? "0" + position(i) + " " : position(i) + " ";
 					}
 					if ((positionX(i) + 2 <= 7) && (positionY(i) - 2 >= 0)) {
 						if (getN((byte) (position(i) + 9)) >= 12 && isEmpty((byte) (position(i) + 18)))
-							results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
+							results += (position(i) < 10) ? "0" + position(i) + " " : position(i) + " ";
 					}
 					if ((positionX(i) - 2 >= 0) && (positionY(i) + 2 <= 7)) {
 						if (getN((byte) (position(i) - 9)) >= 12 && isEmpty((byte) (position(i) - 18)))
-							results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
+							results += (position(i) < 10) ? "0" + position(i) + " " : position(i) + " ";
 					}
 					if ((positionX(i) + 2 <= 7) && (positionY(i) + 2 <= 7)) {
 						if (getN((byte) (position(i) + 11)) >= 12 && isEmpty((byte) (position(i) + 22)))
-							results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
+							results += (position(i) < 10) ? "0" + position(i) + " " : position(i) + " ";
 					}
 				}
 			} // end for
@@ -267,23 +269,23 @@ public class Checkers {
 					if ((positionX(i) - 2 >= 0) && (positionY(i) - 2 >= 0)) {
 						if (getN((byte) (position(i) - 11)) >= 0 && getN((byte) (position(i) - 11)) < 12
 								&& isEmpty((byte) (position(i) - 22)))
-							results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
+							results += (position(i) < 10) ? "0" + position(i) + " " : position(i) + " ";
 
 					}
 					if ((positionX(i) + 2 <= 7) && (positionY(i) - 2 >= 0)) {
 						if (getN((byte) (position(i) + 9)) >= 0 && getN((byte) (position(i) + 9)) < 12
 								&& isEmpty((byte) (position(i) + 18)))
-							results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
+							results += (position(i) < 10) ? "0" + position(i) + " " : position(i) + " ";
 					}
 					if ((positionX(i) - 2 >= 0) && (positionY(i) + 2 <= 7)) {
 						if (getN((byte) (position(i) - 9)) >= 0 && getN((byte) (position(i) - 9)) < 12
 								&& isEmpty((byte) (position(i) - 18)))
-							results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
+							results += (position(i) < 10) ? "0" + position(i) + " " : position(i) + " ";
 					}
 					if ((positionX(i) + 2 <= 7) && (positionY(i) + 2 <= 7)) {
 						if (getN((byte) (position(i) + 11)) >= 0 && getN((byte) (position(i) + 11)) < 12
 								&& isEmpty((byte) (position(i) + 22)))
-							results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
+							results += (position(i) < 10) ? "0" + position(i) + " " : position(i) + " ";
 					}
 				}
 			} // end for
@@ -296,50 +298,50 @@ public class Checkers {
 		if (moves) {
 			if ((positionX(i) - 2 >= 0) && (positionY(i) - 2 >= 0)) {
 				if (getN((byte) (position(i) - 11)) >= 12 && isEmpty((byte) (position(i) - 22)))
-					results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
+					results += (position(i) < 10) ? "0" + position(i) + " " : position(i) + " ";
 			}
 			if ((positionX(i) + 2 <= 7) && (positionY(i) - 2 >= 0)) {
 				if (getN((byte) (position(i) + 9)) >= 12 && isEmpty((byte) (position(i) + 18)))
-					results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
+					results += (position(i) < 10) ? "0" + position(i) + " " : position(i) + " ";
 			}
 			if ((positionX(i) - 2 >= 0) && (positionY(i) + 2 <= 7)) {
 				if (getN((byte) (position(i) - 9)) >= 12 && isEmpty((byte) (position(i) - 18)))
-					results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
+					results += (position(i) < 10) ? "0" + position(i) + " " : position(i) + " ";
 			}
 			if ((positionX(i) + 2 <= 7) && (positionY(i) + 2 <= 7)) {
 				if (getN((byte) (position(i) + 11)) >= 12 && isEmpty((byte) (position(i) + 22)))
-					results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
+					results += (position(i) < 10) ? "0" + position(i) + " " : position(i) + " ";
 			}
 		} else {
 			if ((positionX(i) - 2 >= 0) && (positionY(i) - 2 >= 0)) {
 				if (getN((byte) (position(i) - 11)) >= 0 && getN((byte) (position(i) - 11)) < 12
 						&& isEmpty((byte) (position(i) - 22)))
-					results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
+					results += (position(i) < 10) ? "0" + position(i) + " " : position(i) + " ";
 			}
 			if ((positionX(i) + 2 <= 7) && (positionY(i) - 2 >= 0)) {
 				if (getN((byte) (position(i) + 9)) >= 0 && getN((byte) (position(i) + 9)) < 12
 						&& isEmpty((byte) (position(i) + 18)))
-					results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
+					results += (position(i) < 10) ? "0" + position(i) + " " : position(i) + " ";
 			}
 			if ((positionX(i) - 2 >= 0) && (positionY(i) + 2 <= 7)) {
 				if (getN((byte) (position(i) - 9)) >= 0 && getN((byte) (position(i) - 9)) < 12
 						&& isEmpty((byte) (position(i) - 18)))
-					results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
+					results += (position(i) < 10) ? "0" + position(i) + " " : position(i) + " ";
 			}
 			if ((positionX(i) + 2 <= 7) && (positionY(i) + 2 <= 7)) {
 				if (getN((byte) (position(i) + 11)) >= 0 && getN((byte) (position(i) + 11)) < 12
 						&& isEmpty((byte) (position(i) + 22)))
-					results += (position(i)<10)? "0"+position(i) + " ": position(i) + " ";
+					results += (position(i) < 10) ? "0" + position(i) + " " : position(i) + " ";
 			}
 		}
 		return results;
 	}
 
 	static void drawBoard() {
-//		System.out.println("białe 1:  \t" + printBits(state[0]));
-//		System.out.println("białe 2:  \t" + printBits(state[1]));
-//		System.out.println("czarne 1: \t" + printBits(state[2]));
-//		System.out.println("czarne 2: \t" + printBits(state[3]));
+		System.out.println("static long white1 =\t" + printBits(state[0]));
+		System.out.println("static long white2 =\t" + printBits(state[1]));
+		System.out.println("static long black1 =\t" + printBits(state[2]));
+		System.out.println("static long black2 =\t" + printBits(state[3]));
 		System.out.print(sep + " ");
 		for (byte x = 0; x < 8; x++)
 			System.out.print(x + sep);
@@ -470,9 +472,10 @@ public class Checkers {
 			if (validateMove(a, b, moves) && captured == true) {
 				System.out.print("Ruch " + color + " z pola X: " + (a / 10) + "  Y: " + (a % 10));
 				System.out.println("\tna pole X: " + (b / 10) + "  Y: " + (b % 10));
-				if ((moves && (b % 10 == 7)) || (!moves && (b % 10 == 0)))
-					updateDame(b);
+
 				updatePosition(getN(a, moves), b);
+				if ((moves && (b % 10 == 7)) || (!moves && (b % 10 == 0)))
+					updateDame(getN(b, moves));
 				moves = !moves;
 				drawBoard();
 				if (isCapture(moves).length() > 3)
