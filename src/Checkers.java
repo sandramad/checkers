@@ -384,6 +384,7 @@ public class Checkers {
 		n = getN(a, moves);
 		if (isDame(n) && Math.abs((a % 10) - (b % 10)) > 1) {
 			err = !validateMoveDame(a, b, moves);
+			block = true;
 		} else {
 			if (Math.abs((a % 10) - (b % 10)) == 2 && Math.abs((a / 10) - (b / 10)) == 2
 					&& isCapture(moves).length() > 1) {
