@@ -1,7 +1,6 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.stream.IntStream;
 
 public class Checkers {
 	/*************************************
@@ -9,10 +8,10 @@ public class Checkers {
 	 * 1 white b7 - piece, 0 pawn, 1 dame b8 - state, 0 captured, 1 in game
 	 *************************************/
 	// ułożenie startowe
-//	static long white1 = 0b101001011101001001101000110101000100101000010101000000L;
-//	static long white2 = 0b101010110101010100101010010101010000101001111101001101L;
-//	static long black1 = 0b100110010100110000100101111100101101100101011100101001L;
-//	static long black2 = 0b100111111100111101100111011100111001100110110100110100L;
+	static long white1 = 0b101001011101001001101000110101000100101000010101000000L;
+	static long white2 = 0b101010110101010100101010010101010000101001111101001101L;
+	static long black1 = 0b100110010100110000100101111100101101100101011100101001L;
+	static long black2 = 0b100111111100111101100111011100111001100110110100110100L;
 
 	// ułożenie testujące wielobicia i konwersję na królówkę
 //	static long white1 = 0b101001011101001001101001101101000100101000010101000000L;
@@ -21,10 +20,10 @@ public class Checkers {
 //	static long black2 = 0b100111111100111101100111011100111001100110110100100110L;
 
 	// ułożenie testujące zachowania królówki czarnych
-	static long white1 = 0b101001011101001001001001101101000100101000010101000000L;
-	static long white2 = 0b001011101001011101101010010001101011101001111001101101L;
-	static long black1 = 0b000010110100110000100101111000100110000100010100100000L;
-	static long black2 = 0b100111111100111101100111011100111001100110110110000110L;
+//	static long white1 = 0b101001011101001001001001101101000100101000010101000000L;
+//	static long white2 = 0b001011101001011101101010010001101011101001111001101101L;
+//	static long black1 = 0b000010110100110000100101111000100110000100010100100000L;
+//	static long black2 = 0b100111111100111101100111011100111001100110110110000110L;
 
 	static Long[] state = { white1, white2, black1, black2 };
 
@@ -58,10 +57,10 @@ public class Checkers {
 	static void drawBoard() {
 		// do debugingu - sprawdzamy zapis bitowy gry
 		// (można wykorzystać to tworzenia punktów startowych gry)
-		System.out.println("static long white1 =\t0b" + printBits(state[0]) + "L;");
-		System.out.println("static long white2 =\t0b" + printBits(state[1]) + "L;");
-		System.out.println("static long black1 =\t0b" + printBits(state[2]) + "L;");
-		System.out.println("static long black2 =\t0b" + printBits(state[3]) + "L;");
+//		System.out.println("static long white1 =\t0b" + printBits(state[0]) + "L;");
+//		System.out.println("static long white2 =\t0b" + printBits(state[1]) + "L;");
+//		System.out.println("static long black1 =\t0b" + printBits(state[2]) + "L;");
+//		System.out.println("static long black2 =\t0b" + printBits(state[3]) + "L;");
 		System.out.print(sep + " ");
 		for (byte x = 0; x < 8; x++)
 			System.out.print(x + sep);
@@ -114,7 +113,7 @@ public class Checkers {
 					if (isDame(i)) {
 						byte x = (byte) positionX(i);
 						byte y = (byte) positionY(i);
-
+						// to do
 					} else {
 						if ((positionX(i) - 2 >= 0) && (positionY(i) - 2 >= 0)) {
 							if (getN((byte) (position(i) - 11)) >= 12 && isEmpty((byte) (position(i) - 22)))
@@ -306,26 +305,21 @@ public class Checkers {
 		byte change = (byte) (x - xEnd); // sprawdzamy czy ruszamy się w prawo czy w lewo
 		byte xEmpty = 0;
 		byte yEmpty = 0;
-		System.out.println("spr ruch damki " + getN(a, moves));
 		if (change < 0) {
-			System.out.println("roznica x " + change);
 			for (byte i = (byte) (x + 1); i <= xEnd; i++) {
 				y = (byte) ((y - yEnd < 0) ? y + 1 : y - 1);
 				byte iTmp = Byte.parseByte(i + "" + y);
-				System.out.println("sprawdzam pozycję " + iTmp);
 				if ((getN(iTmp) / 12 == 0) ^ moves) {
 					yEmpty = (byte) ((y - yEnd < 0) ? y + 1 : y - 1);
 					xEmpty = (byte) (i + 1);
 					if (isEmpty(Byte.parseByte(xEnd + "" + yEnd))) {
-						System.out.println(xEmpty * 10 + yEmpty);
-						if (b == (byte) (xEmpty * 10 + yEmpty)) {
+						if (b == (byte) (xEmpty * 10 + yEmpty))
 							updateCaptured(getN(iTmp));
-							System.out.println("Zbita pozycja " + iTmp);
-						} else {
+						else {
 							System.out.println("Możliwe jest bicie na polu " + iTmp + " więc musisz stanąć na polu "
-									+ (xEmpty * 10 + yEmpty));
+									+ xEmpty + "" + yEmpty);
 							err = true;
-							i = (byte) (xEnd + 1);
+							i = (byte) (xEnd + 1); // nie sprawdzamy dalej
 						}
 					} else {
 						System.out.println("ERR: niedozwolone bicie");
@@ -341,22 +335,18 @@ public class Checkers {
 		if (change > 0) {
 			for (byte i = (byte) (x - 1); i >= xEnd; i--) {
 				y = (byte) ((y - yEnd < 0) ? y + 1 : y - 1);
-
 				byte iTmp = Byte.parseByte(i + "" + y);
-				System.out.println("sprawdzam pozycję " + iTmp);
 				if (getN(iTmp) > 0 && ((getN(iTmp) / 12 == 0) ^ moves)) {
 					yEmpty = (byte) ((y - yEnd < 0) ? y + 1 : y - 1);
 					xEmpty = (byte) (i - 1);
 					if (isEmpty((byte) (xEmpty * 10 + yEmpty))) {
-						System.out.println(xEmpty * 10 + yEmpty);
-						if (b == (byte) (xEmpty * 10 + yEmpty)) {
+						if (b == (byte) (xEmpty * 10 + yEmpty))
 							updateCaptured(getN(iTmp));
-							System.out.println("Zbita pozycja " + iTmp);
-						} else {
+						else {
 							System.out.println("Możliwe jest bicie na polu  " + iTmp + " więc musisz stanąć na polu "
-									+ (xEmpty * 10 + yEmpty));
+									+ xEmpty + "" + yEmpty);
 							err = true;
-							i = (byte) (xEnd - 1);
+							i = (byte) (xEnd - 1); // nie sprawdzamy dalej
 						}
 					} else {
 						System.out.println("ERR: niedozwolone bicie");
@@ -399,10 +389,9 @@ public class Checkers {
 					&& isCapture(moves).length() > 1) {
 				if (captured(a, b, moves) == true) {
 					block = true; // jeśli doszło do bicia niedopuszczamy do sprawdzania czy ruch jest +1
-					System.out.println("block " + block);
 					if (isCapture(b, moves).length() > 2) {
 						drawBoard();
-						System.out.println("Masz kolejne bocie na polu " + b);
+						System.out.println("Masz kolejne bicie na polu " + b);
 						err = true; // nie oddajemy kolejki przeciwnikowi
 					}
 				} else {
