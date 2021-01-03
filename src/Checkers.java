@@ -609,7 +609,7 @@ public class Checkers {
 				System.out.println("\tna pole X: " + (b / 10) + "  Y: " + (b % 10));
 
 				updatePosition(getN(a, moves), b);
-				if ((moves && (b % 10 == 7)) || (!moves && (b % 10 == 0)))
+				if ((moves && (b % 10 == 7)) || (!moves && (b % 10 == 0)) && !isDame(getN(a, moves)))
 					updateDame(getN(b, moves));
 				moves = !moves;
 				drawBoard();
