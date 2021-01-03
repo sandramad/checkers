@@ -53,11 +53,31 @@ public class Checkers {
 		if (getN(avg, !moves) > 0 && updateCaptured(getN(avg, !moves))) {
 			updatePosition(n, b);
 			result = true;
+			if (end(!moves)) {
+				String color;
+				color = (moves) ? "białe" : "czarne";
+				System.out.println("Gratuluję, wygrały " + color);
+				System.exit(0);
+			}
 		} else {
 			result = false;
 		}
 		return result;
 	} // end captured
+
+	private static boolean end(boolean moves) {
+		boolean result = false;
+		byte inGame = 0;
+		if (moves == false)
+			for (byte i = 0; i < 12; i++)
+				inGame = getN(i, moves);
+		else
+			for (byte i = 12; i < 24; i++)
+				inGame = getN(i, !moves);
+		if (inGame > 0)
+			result = true;
+		return result;
+	}
 
 	static String dameCapture(byte pos, boolean moves) {
 		String result = "";
@@ -364,6 +384,12 @@ public class Checkers {
 							if (dameCapture((byte) (xEmpty * 10 + yEmpty), moves).length() > 0) {
 								updatePosition(getN(a, moves), b);
 								drawBoard();
+								if (end(!moves)) {
+									String color;
+									color = (moves) ? "białe" : "czarne";
+									System.out.println("Gratuluję, wygrały " + color);
+									System.exit(0);
+								}
 								System.out.println(
 										"Kolejne bicie na polu: " + dameCapture((byte) (xEmpty * 10 + yEmpty), moves));
 								err = true;
@@ -398,6 +424,12 @@ public class Checkers {
 							if (dameCapture((byte) (xEmpty * 10 + yEmpty), moves).length() > 0) {
 								updatePosition(getN(a, moves), b);
 								drawBoard();
+								if (end(!moves)) {
+									String color;
+									color = (moves) ? "białe" : "czarne";
+									System.out.println("Gratuluję, wygrały " + color);
+									System.exit(0);
+								}
 								System.out.println(
 										"Kolejne bicie na polu: " + dameCapture((byte) (xEmpty * 10 + yEmpty), moves));
 								err = true;
