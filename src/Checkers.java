@@ -8,10 +8,16 @@ public class Checkers {
 	 * 1 white b7 - piece, 0 pawn, 1 dame b8 - state, 0 captured, 1 in game
 	 *************************************/
 	// ułożenie startowe
-	 long white1 = 0b101001011101001001101000110101000100101000010101000000L;
-	 long white2 = 0b101010110101010100101010010101010000101001111101001101L;
-	 long black1 = 0b100110010100110000100101111100101101100101011100101001L;
-	 long black2 = 0b100111111100111101100111011100111001100110110100110100L;
+//	long white1 = 0b101001011101001001101000110101000100101000010101000000L;
+//	long white2 = 0b101010110101010100101010010101010000101001111101001101L;
+//	long black1 = 0b100110010100110000100101111100101101100101011100101001L;
+//	long black2 = 0b100111111100111101100111011100111001100110110100110100L;
+
+	// koniec gry
+	long white1 = 0b001011011_001011001_001010100_001001011_001001001_001001001L;
+	long white2 = 0b001011101_001101101_101101001_001101011_101101011_001001101L;
+	long black1 = 0b000010110_110000100_100101111_100001111_000100010_110011101L;
+	long black2 = 0b100111111_100111101_100111011_100111001_110000000_100100110L;
 
 	// ułożenie testujące wielobicia i konwersję na królówkę
 //	 long white1 = 0b101001011101001001101001101101000100101000010101000000L;
@@ -30,56 +36,56 @@ public class Checkers {
 //	 long white2 = 0b001011101_001011101_001011011_001101011_101010110_001101101L;
 //	 long black1 = 0b000010110_100110000_100101111_000100110_000100010_100010000L;
 //	 long black2 = 0b100111111_100111101_100111011_100111001_100110110_110000110L;
-	 Long[] state = { white1, white2, black1, black2 };
+	Long[] state = { white1, white2, black1, black2 };
 
-	 long ifMask = 0b100000000L;
-	 long posXMask = 0b111L;
+	long ifMask = 0b100000000L;
+	long posXMask = 0b111L;
 
-	public  final String sep = " ";
+	public final String sep = " ";
 
-	 char sqW = '\u2591';
-	 char sqK = '\u2588';
-	 char pwnW = 'O';
-	 char pwnK = 'X';
-	 char dameW = '\u019F';
-	 char dameK = '\u0416';
+	char sqW = '\u2591';
+	char sqK = '\u2588';
+	char pwnW = 'O';
+	char pwnK = 'X';
+	char dameW = '\u019F';
+	char dameK = '\u0416';
 	// n będzie numerować pionki. 0..11 to dwanaście pionków białych,
 	// 12..23 to dwanaście pionków czarnych
 
-	private  boolean captured(byte a, byte b, boolean moves) {
+	private boolean captured(byte a, byte b, boolean moves) {
 		byte n = getN(a, moves);
 		boolean result = false;
 		byte avg = (byte) ((a + b) / 2);
-		if (getN(avg, !moves) > 0 && updateCaptured(getN(avg, !moves))) {
+		if (getN(avg, !moves) >= 0 && updateCaptured(getN(avg, !moves))) {
 			updatePosition(n, b);
 			result = true;
-			if (end(!moves)) {
-				String color;
-				color = (moves) ? "białe" : "czarne";
-				System.out.println("Gratuluję, wygrały " + color);
-				System.exit(0);
-			}
-		} else {
+		} else
 			result = false;
-		}
+
 		return result;
 	} // end captured
 
-	private  boolean end(boolean moves) {
+	private boolean end(boolean moves) {
 		boolean result = false;
-		byte inGame = -1;
-		if (moves == false)
-			for (byte i = 0; i < 12 && inGame < 0; i++)
-				inGame = getN(i, moves);
-		else
-			for (byte i = 12; i < 24 && inGame < 0; i++)
-				inGame = getN(i, !moves);
-		if (inGame < 0)
+		byte inGame = 0;
+		if (moves == false) {
+			for (byte i = 0; (i < 12); i++) {
+				if (isInGame(i))
+					inGame += 1;
+			}
+		} else {
+			for (byte i = 12; (i < 24); i++) {
+				if (isInGame(i))
+					inGame += 1;
+
+			}
+		}
+		if (inGame == 0)
 			result = true;
 		return result;
 	}
 
-	 String dameCapture(byte pos, boolean moves) {
+	String dameCapture(byte pos, boolean moves) {
 		String result = "";
 		int[] xDir = { -1, 1, -1, 1 };
 		int[] yDir = { -1, -1, 1, 1 };
@@ -120,7 +126,7 @@ public class Checkers {
 		return result;
 	}
 
-	 void drawBoard() {
+	void drawBoard() {
 		// do debugingu - sprawdzamy zapis bitowy gry
 		// (można wykorzystać to tworzenia punktów startowych gry)
 		System.out.println(" long white1 =\t0b" + printBits(state[0]) + "L;");
@@ -170,7 +176,7 @@ public class Checkers {
 		System.out.println();
 	}
 
-	 String isCapture(boolean moves) {
+	String isCapture(boolean moves) {
 		String results = "";
 		if (moves)
 			for (byte i = 0; i < 12; i++) // białe
@@ -229,7 +235,7 @@ public class Checkers {
 		return results;
 	} // end isCapture
 
-	 String isCapture(byte b, boolean moves) { // sprawdzamy czy jest bicie dla pionka, którym właśnie zbiliśmy
+	String isCapture(byte b, boolean moves) { // sprawdzamy czy jest bicie dla pionka, którym właśnie zbiliśmy
 		String results = "";
 		byte i = getN(b, moves);
 		if (moves) { // białe
@@ -274,7 +280,7 @@ public class Checkers {
 		return results;
 	}
 
-	 boolean isDame(byte n) {
+	boolean isDame(byte n) {
 		long flag = -1;
 		long aMask = ifMask >> 1; // tworzę maskę dla damki
 		aMask = aMask << (n % 6) * 9; // tworzę lokalną maskę, specyficzną dla piona n
@@ -283,7 +289,7 @@ public class Checkers {
 		return (flag == 1);
 	}
 
-	 boolean isEmpty(byte pos) {
+	boolean isEmpty(byte pos) {
 		byte x = (byte) (pos / 10);
 		byte y = (byte) (pos % 10);
 		for (byte i = 0; i < 24; i++)
@@ -292,7 +298,7 @@ public class Checkers {
 		return true;
 	} // end isEmpty
 
-	 boolean isInGame(byte n) {
+	boolean isInGame(byte n) {
 		long flag = -1L;
 		long aMask = ifMask << (n % 6) * 9; // tworzę lokalną maskę, specyficzną dla piona n
 		flag = state[n / 6] & aMask; // sprawdza, czy jest 1 na miejscu b8 piona n w longu stanu gry
@@ -300,7 +306,7 @@ public class Checkers {
 		return (flag == 1);
 	}
 
-	 byte getN(byte pos, boolean moves) {
+	byte getN(byte pos, boolean moves) {
 		byte result = -1;
 		if (moves == true)
 			for (byte i = 0; i < 12; i++) {
@@ -321,7 +327,7 @@ public class Checkers {
 		// rozdzielenie na kolory - ograniczy wykonywanie pętli
 	}
 
-	 byte getN(byte pos) {
+	byte getN(byte pos) {
 		byte result = -1;
 		for (byte i = 0; i < 24; i++) {
 			if (((pos / 10) == positionX(i)) && ((pos % 10) == positionY(i)) && isInGame(i)) {
@@ -332,26 +338,26 @@ public class Checkers {
 		return result;
 	} // do wykorzystania gdy musimy sprawdzić całą tablicę
 
-	 long positionX(byte n) {
+	long positionX(byte n) {
 		long aMask = posXMask << (n % 6) * 9;
 		long result = state[n / 6] & aMask;
 		result = result >> (n % 6) * 9;
 		return result;
 	}
 
-	 long positionY(byte n) {
+	long positionY(byte n) {
 		long aMask = (posXMask << 3) << (n % 6) * 9;
 		long result = state[n / 6] & aMask;
 		result = result >> (n % 6) * 9 + 3;
 		return result;
 	}
 
-	 byte position(byte n) {
+	byte position(byte n) {
 		byte result = (byte) (10 * positionX(n) + positionY(n));
 		return result;
 	}
 
-	public  String printBits(long value) { // funkcja do debugingu, bez znaczenia dla gry
+	public String printBits(long value) { // funkcja do debugingu, bez znaczenia dla gry
 		StringBuffer sb = new StringBuffer();
 		for (int shift = 53; shift >= 0; shift--) {
 			if (shift % 9 == 8)
@@ -361,7 +367,7 @@ public class Checkers {
 		return sb.toString();
 	} // end printBits
 
-	 boolean validateMoveDame(byte a, byte b, boolean moves) {
+	boolean validateMoveDame(byte a, byte b, boolean moves) {
 		boolean result;
 		boolean err = false;
 		byte x = (byte) (a / 10);
@@ -384,12 +390,6 @@ public class Checkers {
 							if (dameCapture((byte) (xEmpty * 10 + yEmpty), moves).length() > 0) {
 								updatePosition(getN(a, moves), b);
 								drawBoard();
-								if (end(!moves)) {
-									String color;
-									color = (moves) ? "białe" : "czarne";
-									System.out.println("Gratuluję, wygrały " + color);
-									System.exit(0);
-								}
 								System.out.println(
 										"Kolejne bicie na polu: " + dameCapture((byte) (xEmpty * 10 + yEmpty), moves));
 								err = true;
@@ -424,12 +424,6 @@ public class Checkers {
 							if (dameCapture((byte) (xEmpty * 10 + yEmpty), moves).length() > 0) {
 								updatePosition(getN(a, moves), b);
 								drawBoard();
-								if (end(!moves)) {
-									String color;
-									color = (moves) ? "białe" : "czarne";
-									System.out.println("Gratuluję, wygrały " + color);
-									System.exit(0);
-								}
 								System.out.println(
 										"Kolejne bicie na polu: " + dameCapture((byte) (xEmpty * 10 + yEmpty), moves));
 								err = true;
@@ -459,7 +453,7 @@ public class Checkers {
 		return result;
 	}
 
-	 boolean validateMove(byte a, byte b, boolean moves) {
+	boolean validateMove(byte a, byte b, boolean moves) {
 		boolean result = false;
 		boolean err = false;
 		boolean block = false;
@@ -554,7 +548,7 @@ public class Checkers {
 		return result;
 	}// end validateMove
 
-	 boolean updateCaptured(byte n) {
+	boolean updateCaptured(byte n) {
 		boolean result = false;
 		long aposs = (ifMask << ((n % 6) * 9));
 		if (aposs > 128) {
@@ -565,14 +559,14 @@ public class Checkers {
 
 	} // end updateCaptured
 
-	 void updateDame(byte n) {
+	void updateDame(byte n) {
 		if (!isDame(n)) {
 			long aposs = ((ifMask >> 1) << ((n % 6) * 9));
 			state[n / 6] = state[n / 6] + aposs;
 		}
 	} // end updateDame
 
-	 void updatePosition(byte n, byte pos) {
+	void updatePosition(byte n, byte pos) {
 		long apos = positionX(n);
 		apos = apos << (n % 6) * 9;
 		state[n / 6] = state[n / 6] - apos;
@@ -654,7 +648,8 @@ public class Checkers {
 
 			if (checkers.isCapture(moves).length() > 2) {
 				captured = false;
-				String[] must = checkers.isCapture(moves).substring(0, (checkers.isCapture(moves).length() - 1)).split(" ");
+				String[] must = checkers.isCapture(moves).substring(0, (checkers.isCapture(moves).length() - 1))
+						.split(" ");
 				for (byte i = 0; i < must.length && captured == false; i++)
 					if (a == Byte.parseByte(must[i]) && Math.abs(a - b) > 16)
 						captured = true;
@@ -668,6 +663,11 @@ public class Checkers {
 					checkers.updateDame(checkers.getN(b, moves));
 				moves = !moves;
 				checkers.drawBoard();
+				if (checkers.end(!moves)) {
+					color = (!moves) ? "białe" : "czarne";
+					System.out.println("Gratuluję, wygrały " + color);
+					System.exit(0);
+				}
 				if (checkers.isCapture(moves).length() > 3)
 					System.out.println("Możliwe bicia na polach: " + checkers.isCapture(moves));
 				if (checkers.isCapture(moves).length() == 3)
