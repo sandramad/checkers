@@ -39,8 +39,8 @@ public class Checkers {
 
 	 char sqW = '\u2591';
 	 char sqK = '\u2588';
-	 static char pwnW = 'O';
-	 static char pwnK = 'X';
+	 char pwnW = 'O';
+	 char pwnK = 'X';
 	 char dameW = '\u019F';
 	 char dameK = '\u0416';
 	// n będzie numerować pionki. 0..11 to dwanaście pionków białych,
@@ -590,7 +590,7 @@ public class Checkers {
 		state[n / 6] = state[n / 6] + apos;
 	} // end updatePosition
 
-	static public  void main(String[] args) throws InterruptedException {
+	static public void main(String[] args) throws InterruptedException {
 		Checkers checkers = new Checkers();
 		String nameW = "";
 		String nameK = "";
@@ -614,8 +614,8 @@ public class Checkers {
 		}
 		nameW = (nameW.charAt(0) + "").toUpperCase() + nameW.substring(1).toLowerCase();
 		nameK = (nameK.charAt(0) + "").toUpperCase() + nameK.substring(1).toLowerCase();
-		System.out.println(nameW + " gra " + pwnW + " i rozpoczyna rozgrywkę");
-		System.out.println(nameK + " gra " + pwnK + "\nPowodzenia!");
+		System.out.println(nameW + " gra " + checkers.pwnW + " i rozpoczyna rozgrywkę");
+		System.out.println(nameK + " gra " + checkers.pwnK + "\nPowodzenia!");
 		checkers.drawBoard();
 		System.out.println(
 				"Pozycję podawaj parami współrzędnych - z jakiej pozycji chcesz się ruszyć na jaką np. \"02-13\"");
