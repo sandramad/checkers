@@ -74,7 +74,7 @@ public class Checkers {
 		else
 			for (byte i = 12; i < 24; i++)
 				inGame = getN(i, !moves);
-		if (inGame > 0)
+		if (inGame == 0)
 			result = true;
 		return result;
 	}
