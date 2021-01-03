@@ -13,6 +13,12 @@ public class Checkers {
 	long black1 = 0b100110010100110000100101111100101101100101011100101001L;
 	long black2 = 0b100111111100111101100111011100111001100110110100110100L;
 
+	// poruszanie się damki
+//	long white1 = 0b001101001_001100100_101000110_001001011_001001001_001001001L;
+//	long white2 = 0b001011101_001100010_001011001_001101011_001101011_001011011L;
+//	long black1 = 0b000010110_100010100_100101111_000100100_000100010_000011011L;
+//	long black2 = 0b100101101_100111101_100111011_100111001_000011011_010010100L;
+
 	// koniec gry
 //	long white1 = 0b001011011_001011001_001010100_001001011_001001001_001001001L;
 //	long white2 = 0b001011101_001101101_101101001_001101011_101101011_001001101L;
@@ -468,77 +474,78 @@ public class Checkers {
 			System.out.println("ERR: Pion złego koloru");
 			err = true;
 		}
-		n = getN(a, moves);
-		if (isDame(n) && Math.abs((a % 10) - (b % 10)) > 1) {
-			err = !validateMoveDame(a, b, moves);
-			block = true;
-		} else {
-			if (Math.abs((a % 10) - (b % 10)) == 2 && Math.abs((a / 10) - (b / 10)) == 2
-					&& isCapture(moves).length() > 1) {
-				if (captured(a, b, moves) == true) {
-					block = true; // jeśli doszło do bicia niedopuszczamy do sprawdzania czy ruch jest +1
-					if (isCapture(b, moves).length() > 2) {
-						drawBoard();
-						System.out.println("Masz kolejne bicie na polu " + b);
-						err = true; // nie oddajemy kolejki przeciwnikowi
+		if (err == false) {
+			if (isDame(n) && Math.abs((a % 10) - (b % 10)) > 2) {
+				err = !validateMoveDame(a, b, moves);
+				block = true;
+			} else {
+				if (Math.abs((a % 10) - (b % 10)) == 2 && Math.abs((a / 10) - (b / 10)) == 2
+						&& isCapture(moves).length() > 1) {
+					if (captured(a, b, moves) == true) {
+						block = true; // jeśli doszło do bicia niedopuszczamy do sprawdzania czy ruch jest +1
+						if (isCapture(b, moves).length() > 2) {
+							drawBoard();
+							System.out.println("Masz kolejne bicie na polu " + b);
+							err = true; // nie oddajemy kolejki przeciwnikowi
+						}
+					} else if (!isDame(getN(n))) {
+						System.out.println("ERR: Nieudane bicie");
+						block = true;
+						err = true; // zły ruch
 					}
-				} else {
-					System.out.println("ERR: Nieudane bicie");
-					block = true;
-					err = true; // zły ruch
 				}
-			}
-			if (Math.abs((a % 10) - (b % 10)) != 1 && !isDame(n) && block == false) {
-				System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole");
-				err = true;
-			} else if ((b % 10) - (a % 10) != 1 && moves == true && !isDame(getN(a, moves)) && block == false) {
-				System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole");
-				err = true;
-			} else if ((a % 10) - (b % 10) != 1 && moves == false && !isDame(getN(a, moves)) && block == false) {
-				System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole");
-				err = true;
-			}
-			if (a / 10 < 0) {
-				System.out.println("ERR: Pole startowe ma X < 0 \t X = " + (a / 10));
-				err = true;
-			} else if (a / 10 > 7) {
-				System.out.println("ERR: Pole startowe ma X > 7 \t X = " + (a / 10));
-				err = true;
-			}
-			if (a % 10 < 0) {
-				System.out.println("ERR: Pole startowe ma Y < 0 \t Y = " + (a % 10));
-				err = true;
-			} else if (a % 10 > 7) {
-				System.out.println("ERR: Pole startowe ma Y > 7 \t Y = " + (a % 10));
-				err = true;
-			}
-			if (((a / 10) + (a % 10)) % 2 == 1) {
-				System.out.println("ERR: Pole startowe jest czarne \t " + a);
-				err = true;
-			}
-			if (b / 10 < 0) {
-				System.out.println("ERR: Pole docelowe ma X < 0 \t X = " + (b / 10));
-				err = true;
-			} else if (b / 10 > 7) {
-				System.out.println("ERR: Pole docelowe ma X > 7 \t X = " + (b / 10));
-				err = true;
-			}
-			if (b % 10 < 0) {
-				System.out.println("ERR: Pole docelowe ma Y < 0 \t Y = " + (b % 10));
-				err = true;
-			} else if (b % 10 > 7) {
-				System.out.println("ERR: Pole docelowe ma Y > 7 \t Y = " + (b % 10));
-				err = true;
-			}
-			if (((b / 10) + (b % 10)) % 2 == 1) {
-				System.out.println("ERR: Pole docelowe jest czarne \t " + b);
-				err = true;
-			}
+				if (Math.abs((a % 10) - (b % 10)) != 1 && !isDame(n) && block == false) {
+					System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole");
+					err = true;
+				} else if ((b % 10) - (a % 10) != 1 && moves == true && !isDame(n) && block == false) {
+					System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole");
+					err = true;
+				} else if ((a % 10) - (b % 10) != 1 && moves == false && !isDame(n) && block == false) {
+					System.out.println("ERR: Nie można się ruszać o więcej niż jedno pole");
+					err = true;
+				}
+				if (a / 10 < 0) {
+					System.out.println("ERR: Pole startowe ma X < 0 \t X = " + (a / 10));
+					err = true;
+				} else if (a / 10 > 7) {
+					System.out.println("ERR: Pole startowe ma X > 7 \t X = " + (a / 10));
+					err = true;
+				}
+				if (a % 10 < 0) {
+					System.out.println("ERR: Pole startowe ma Y < 0 \t Y = " + (a % 10));
+					err = true;
+				} else if (a % 10 > 7) {
+					System.out.println("ERR: Pole startowe ma Y > 7 \t Y = " + (a % 10));
+					err = true;
+				}
+				if (((a / 10) + (a % 10)) % 2 == 1) {
+					System.out.println("ERR: Pole startowe jest czarne \t " + a);
+					err = true;
+				}
+				if (b / 10 < 0) {
+					System.out.println("ERR: Pole docelowe ma X < 0 \t X = " + (b / 10));
+					err = true;
+				} else if (b / 10 > 7) {
+					System.out.println("ERR: Pole docelowe ma X > 7 \t X = " + (b / 10));
+					err = true;
+				}
+				if (b % 10 < 0) {
+					System.out.println("ERR: Pole docelowe ma Y < 0 \t Y = " + (b % 10));
+					err = true;
+				} else if (b % 10 > 7) {
+					System.out.println("ERR: Pole docelowe ma Y > 7 \t Y = " + (b % 10));
+					err = true;
+				}
+				if (((b / 10) + (b % 10)) % 2 == 1) {
+					System.out.println("ERR: Pole docelowe jest czarne \t " + b);
+					err = true;
+				}
 
-			n = getN(b);
-			if ((n >= 0) && (n < 24) && err == false && block == false) {
-				System.out.println("ERR: Pole docelowe nie jest puste. \t n: " + n);
-				err = true;
+				n = getN(b);
+				if ((n >= 0) && (n < 24) && err == false && block == false) {
+					System.out.println("ERR: Pole docelowe nie jest puste. \t n: " + n);
+					err = true;
+				}
 			}
 		}
 		if (err == true)
@@ -662,21 +669,21 @@ public class Checkers {
 				checkers.updatePosition(checkers.getN(a, moves), b);
 				if ((moves && (b % 10 == 7)) || (!moves && (b % 10 == 0)) && !checkers.isDame(checkers.getN(a, moves)))
 					checkers.updateDame(checkers.getN(b, moves));
-				moves = !moves;
 				checkers.drawBoard();
-				if (checkers.end(!moves)) {
-					color = (!moves) ? "białe" : "czarne";
-					String name = (!moves) ? nameW : nameK;
-					System.out.println("Gratuluję " + name + ", wygrały " + color+"!\nDziękuję za grę.");
-					System.exit(0);
-				}
-				if (checkers.isCapture(moves).length() > 3)
-					System.out.println("Możliwe bicia na polach: " + checkers.isCapture(moves));
-				if (checkers.isCapture(moves).length() == 3)
-					System.out.println("Możliwe bicie na polu: " + checkers.isCapture(moves));
-			} else if (checkers.isCapture(moves).length() > 2)
+				if (checkers.isCapture(!moves).length() > 3)
+					System.out.println("Możliwe bicia na polach: " + checkers.isCapture(!moves));
+				if (checkers.isCapture(!moves).length() == 3)
+					System.out.println("Możliwe bicie na polu: " + checkers.isCapture(!moves));
+				moves = !moves;
+			} else if (checkers.isCapture(!moves).length() > 2)
 				System.out.println("Bicia są obowiązkowe");
 			checkers.isCapture(moves);
+			if (checkers.end(!moves)) {
+				color = (!moves) ? "białe" : "czarne";
+				String name = (!moves) ? nameW : nameK;
+				System.out.println("Gratuluję " + name + ", wygrały " + color + "!\nDziękuję za grę.");
+				System.exit(0);
+			}
 		} // end while
 	}// end Main
 } // end Checkers
