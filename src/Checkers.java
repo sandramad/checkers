@@ -50,12 +50,13 @@ public class Checkers {
 
 	final String sep = " ";
 
-	final char sqW = '\u2591';
-	final char sqK = '\u2588';
-	final char pwnW = 'O';
-	final char pwnK = 'X';
-	final char dameW = '\u019F';
-	final char dameK = '\u0416';
+	final char sqW = '\u2591'; // '\u2b1b';
+	final char sqK = '\u2588'; // '\u2b1c';
+	final char pwnW = 'O'; // '\u2659';
+	final char pwnK = 'X'; // '\u265f';
+	final char dameW = '\u019F'; // '\u2655';
+	final char dameK = '\u0416'; // '\u265B';
+
 	// n będzie numerować pionki. 0..11 to dwanaście pionków białych,
 	// 12..23 to dwanaście pionków czarnych
 
@@ -136,10 +137,10 @@ public class Checkers {
 	void drawBoard() {
 		// do debugingu - sprawdzamy zapis bitowy gry
 		// (można wykorzystać to tworzenia punktów startowych gry)
-		System.out.println(" long white1 =\t0b" + printBits(state[0]) + "L;");
-		System.out.println(" long white2 =\t0b" + printBits(state[1]) + "L;");
-		System.out.println(" long black1 =\t0b" + printBits(state[2]) + "L;");
-		System.out.println(" long black2 =\t0b" + printBits(state[3]) + "L;");
+//		System.out.println(" long white1 =\t0b" + printBits(state[0]) + "L;");
+//		System.out.println(" long white2 =\t0b" + printBits(state[1]) + "L;");
+//		System.out.println(" long black1 =\t0b" + printBits(state[2]) + "L;");
+//		System.out.println(" long black2 =\t0b" + printBits(state[3]) + "L;");
 		System.out.print(sep + " ");
 		for (byte x = 0; x < 8; x++)
 			System.out.print(x + sep);
