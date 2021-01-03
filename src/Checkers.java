@@ -666,7 +666,8 @@ public class Checkers {
 				checkers.drawBoard();
 				if (checkers.end(!moves)) {
 					color = (!moves) ? "białe" : "czarne";
-					System.out.println("Gratuluję, wygrały " + color);
+					String name = (!moves) ? nameW : nameK;
+					System.out.println("Gratuluję " + name + ", wygrały " + color+"!\nDziękuję za grę.");
 					System.exit(0);
 				}
 				if (checkers.isCapture(moves).length() > 3)
