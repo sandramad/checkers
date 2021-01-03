@@ -8,10 +8,10 @@ public class Checkers {
 	 * 1 white b7 - piece, 0 pawn, 1 dame b8 - state, 0 captured, 1 in game
 	 *************************************/
 	// ułożenie startowe
-	static long white1 = 0b101001011101001001101000110101000100101000010101000000L;
-	static long white2 = 0b101010110101010100101010010101010000101001111101001101L;
-	static long black1 = 0b100110010100110000100101111100101101100101011100101001L;
-	static long black2 = 0b100111111100111101100111011100111001100110110100110100L;
+//	static long white1 = 0b101001011101001001101000110101000100101000010101000000L;
+//	static long white2 = 0b101010110101010100101010010101010000101001111101001101L;
+//	static long black1 = 0b100110010100110000100101111100101101100101011100101001L;
+//	static long black2 = 0b100111111100111101100111011100111001100110110100110100L;
 
 	// ułożenie testujące wielobicia i konwersję na królówkę
 //	static long white1 = 0b101001011101001001101001101101000100101000010101000000L;
@@ -20,10 +20,10 @@ public class Checkers {
 //	static long black2 = 0b100111111100111101100111011100111001100110110100100110L;
 
 	// ułożenie testujące zachowania królówki czarnych
-//	static long white1 = 0b101001011101001001001001101101000100101000010101000000L;
-//	static long white2 = 0b001011101001011101101010010001101011101001111001101101L;
-//	static long black1 = 0b000010110100110000100101111000100110000100010100100000L;
-//	static long black2 = 0b100111111100111101100111011100111001100110110110000110L;
+	static long white1 = 0b101001011101001001001001101101000100101000010101000000L;
+	static long white2 = 0b001011101001011101101010010001101011101001111001101101L;
+	static long black1 = 0b000010110100110000100101111000100110000100010100100000L;
+	static long black2 = 0b100111111100111101100111011100111001100110110110000110L;
 
 	static Long[] state = { white1, white2, black1, black2 };
 
@@ -54,13 +54,54 @@ public class Checkers {
 		return result;
 	} // end captured
 
+	static String dameCapture(byte pos, boolean moves) {
+		String result = "";
+		int[] xDir = { -1, 1, -1, 1 };
+		int[] yDir = { -1, -1, 1, 1 };
+		int x = pos / 10;
+		int y = pos % 10;
+		boolean cond = true;
+		for (int dir = 0; dir < 4; dir++) {
+			x = pos / 10;
+			y = pos % 10;
+			cond = true;
+			while (cond) {
+				x += xDir[dir];
+				y += yDir[dir];
+				if (x < 0 || x > 7 || y < 0 || y > 7) {
+					cond = false;
+				} else {
+					if (!isEmpty((byte) (10 * x + y))) {
+						if ((getN((byte) (10 * x + y)) >= 12) ^ !moves) {
+							x += xDir[dir];
+							y += yDir[dir];
+							if (x < 0 || x > 7 || y < 0 || y > 7) {
+								cond = false;
+							} else {
+								if (isEmpty((byte) (10 * x + y))) {
+									x -= xDir[dir];
+									y -= yDir[dir];
+									result += pos + " ";
+									cond = false;
+								}
+							}
+						} else {
+							cond = false;
+						}
+					}
+				} // end while
+			} // end for
+		}
+		return result;
+	}
+
 	static void drawBoard() {
 		// do debugingu - sprawdzamy zapis bitowy gry
 		// (można wykorzystać to tworzenia punktów startowych gry)
-//		System.out.println("static long white1 =\t0b" + printBits(state[0]) + "L;");
-//		System.out.println("static long white2 =\t0b" + printBits(state[1]) + "L;");
-//		System.out.println("static long black1 =\t0b" + printBits(state[2]) + "L;");
-//		System.out.println("static long black2 =\t0b" + printBits(state[3]) + "L;");
+		System.out.println("static long white1 =\t0b" + printBits(state[0]) + "L;");
+		System.out.println("static long white2 =\t0b" + printBits(state[1]) + "L;");
+		System.out.println("static long black1 =\t0b" + printBits(state[2]) + "L;");
+		System.out.println("static long black2 =\t0b" + printBits(state[3]) + "L;");
 		System.out.print(sep + " ");
 		for (byte x = 0; x < 8; x++)
 			System.out.print(x + sep);
@@ -110,11 +151,9 @@ public class Checkers {
 			for (byte i = 0; i < 12; i++) // białe
 			{
 				if (isInGame(i)) {
-					if (isDame(i)) {
-						byte x = (byte) positionX(i);
-						byte y = (byte) positionY(i);
-						// to do
-					} else {
+					if (isDame(i))
+						results += dameCapture(position(i), moves);
+					else {
 						if ((positionX(i) - 2 >= 0) && (positionY(i) - 2 >= 0)) {
 							if (getN((byte) (position(i) - 11)) >= 12 && isEmpty((byte) (position(i) - 22)))
 								results += (position(i) < 10) ? "0" + position(i) + " " : position(i) + " ";
@@ -137,6 +176,8 @@ public class Checkers {
 		else
 			for (byte i = 12; i < 24; i++) { // czarne
 				if (isInGame(i)) {
+					if (isDame(i))
+						results += dameCapture(position(i), moves);
 					if ((positionX(i) - 2 >= 0) && (positionY(i) - 2 >= 0)) {
 						if (getN((byte) (position(i) - 11)) >= 0 && getN((byte) (position(i) - 11)) < 12
 								&& isEmpty((byte) (position(i) - 22)))
@@ -289,7 +330,7 @@ public class Checkers {
 		StringBuffer sb = new StringBuffer();
 		for (int shift = 53; shift >= 0; shift--) {
 			if (shift % 9 == 8)
-				sb.append(" "); // z podziałem na pionki
+				sb.append("_"); // z podziałem na pionki
 			sb.append((((value >>> shift) & 01) != 0) ? "1" : "0");
 		}
 		return sb.toString();
