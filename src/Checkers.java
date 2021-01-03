@@ -8,10 +8,10 @@ public class Checkers {
 	 * 1 white b7 - piece, 0 pawn, 1 dame b8 - state, 0 captured, 1 in game
 	 *************************************/
 	// ułożenie startowe
-//	static long white1 = 0b101001011101001001101000110101000100101000010101000000L;
-//	static long white2 = 0b101010110101010100101010010101010000101001111101001101L;
-//	static long black1 = 0b100110010100110000100101111100101101100101011100101001L;
-//	static long black2 = 0b100111111100111101100111011100111001100110110100110100L;
+	static long white1 = 0b101001011101001001101000110101000100101000010101000000L;
+	static long white2 = 0b101010110101010100101010010101010000101001111101001101L;
+	static long black1 = 0b100110010100110000100101111100101101100101011100101001L;
+	static long black2 = 0b100111111100111101100111011100111001100110110100110100L;
 
 	// ułożenie testujące wielobicia i konwersję na królówkę
 //	static long white1 = 0b101001011101001001101001101101000100101000010101000000L;
@@ -20,11 +20,16 @@ public class Checkers {
 //	static long black2 = 0b100111111100111101100111011100111001100110110100100110L;
 
 	// ułożenie testujące zachowania królówki czarnych
-	static long white1 = 0b101001011101001001001001101101000100101000010101000000L;
-	static long white2 = 0b001011101001011101101010010001101011101001111001101101L;
-	static long black1 = 0b000010110100110000100101111000100110000100010100100000L;
-	static long black2 = 0b100111111100111101100111011100111001100110110110000110L;
+//	static long white1 = 0b101001011101001001001001101101000100101000010101000000L;
+//	static long white2 = 0b001011101001011101101010010001101011101001111001101101L;
+//	static long black1 = 0b000010110100110000100101111000100110000100010100100000L;
+//	static long black2 = 0b100111111100111101100111011100111001100110110110000110L;
 
+	// wielobicia królówki
+//	static long white1 = 0b101001011_101010010_001001101_001001101_101000010_101000000L;
+//	static long white2 = 0b001011101_001011101_001011011_001101011_101010110_001101101L;
+//	static long black1 = 0b000010110_100110000_100101111_000100110_000100010_100010000L;
+//	static long black2 = 0b100111111_100111101_100111011_100111001_100110110_110000110L;
 	static Long[] state = { white1, white2, black1, black2 };
 
 	static long ifMask = 0b100000000L;
@@ -354,9 +359,16 @@ public class Checkers {
 					yEmpty = (byte) ((y - yEnd < 0) ? y + 1 : y - 1);
 					xEmpty = (byte) (i + 1);
 					if (isEmpty(Byte.parseByte(xEnd + "" + yEnd))) {
-						if (b == (byte) (xEmpty * 10 + yEmpty))
+						if (b == (byte) (xEmpty * 10 + yEmpty)) {
 							updateCaptured(getN(iTmp));
-						else {
+							if (dameCapture((byte) (xEmpty * 10 + yEmpty), moves).length() > 0) {
+								updatePosition(getN(a, moves), b);
+								drawBoard();
+								System.out.println(
+										"Kolejne bicie na polu: " + dameCapture((byte) (xEmpty * 10 + yEmpty), moves));
+								err = true;
+							}
+						} else {
 							System.out.println("Możliwe jest bicie na polu " + iTmp + " więc musisz stanąć na polu "
 									+ xEmpty + "" + yEmpty);
 							err = true;
@@ -367,7 +379,7 @@ public class Checkers {
 						i = (byte) (xEnd + 1);
 						err = true;
 					}
-				} else if (getN(iTmp) > 0) {
+				} else if (getN(iTmp) > 0 && err == false) {
 					System.out.println("ERR: Na polu " + iTmp + " stoi pionek");
 					err = true;
 				}
@@ -381,9 +393,16 @@ public class Checkers {
 					yEmpty = (byte) ((y - yEnd < 0) ? y + 1 : y - 1);
 					xEmpty = (byte) (i - 1);
 					if (isEmpty((byte) (xEmpty * 10 + yEmpty))) {
-						if (b == (byte) (xEmpty * 10 + yEmpty))
+						if (b == (byte) (xEmpty * 10 + yEmpty)) {
 							updateCaptured(getN(iTmp));
-						else {
+							if (dameCapture((byte) (xEmpty * 10 + yEmpty), moves).length() > 0) {
+								updatePosition(getN(a, moves), b);
+								drawBoard();
+								System.out.println(
+										"Kolejne bicie na polu: " + dameCapture((byte) (xEmpty * 10 + yEmpty), moves));
+								err = true;
+							}
+						} else {
 							System.out.println("Możliwe jest bicie na polu  " + iTmp + " więc musisz stanąć na polu "
 									+ xEmpty + "" + yEmpty);
 							err = true;
@@ -395,7 +414,7 @@ public class Checkers {
 						err = true;
 
 					}
-				} else if (getN(iTmp) > 0) {
+				} else if (getN(iTmp) > 0 && err == false) {
 					System.out.println("ERR: Na polu " + iTmp + " stoi pionek");
 					err = true;
 				}
