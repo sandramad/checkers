@@ -350,7 +350,7 @@ public class Checkers {
 			for (byte i = (byte) (x + 1); i <= xEnd; i++) {
 				y = (byte) ((y - yEnd < 0) ? y + 1 : y - 1);
 				byte iTmp = Byte.parseByte(i + "" + y);
-				if ((getN(iTmp) / 12 == 0) ^ moves) {
+				if ((getN(iTmp) / 12 == 0) ^ moves && isInGame(getN(iTmp))) {
 					yEmpty = (byte) ((y - yEnd < 0) ? y + 1 : y - 1);
 					xEmpty = (byte) (i + 1);
 					if (isEmpty(Byte.parseByte(xEnd + "" + yEnd))) {
@@ -514,9 +514,10 @@ public class Checkers {
 	} // end updateCaptured
 
 	static void updateDame(byte n) {
-		long aposs = ((ifMask >> 1) << ((n % 6) * 9));
-		state[n / 6] = state[n / 6] + aposs;
-
+		if (!isDame(n)) {
+			long aposs = ((ifMask >> 1) << ((n % 6) * 9));
+			state[n / 6] = state[n / 6] + aposs;
+		}
 	} // end updateDame
 
 	static void updatePosition(byte n, byte pos) {
@@ -591,6 +592,7 @@ public class Checkers {
 			byte b = 0;
 			ab = ab.replaceAll("d", "");
 			ab = ab.replaceAll("D", "");
+			ab = ab.replaceAll("--", "-");
 			if (ab.length() == 4)
 				b = Byte.parseByte(ab.substring(2, 4));
 			else
