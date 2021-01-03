@@ -103,10 +103,10 @@ public class Checkers {
 	static void drawBoard() {
 		// do debugingu - sprawdzamy zapis bitowy gry
 		// (można wykorzystać to tworzenia punktów startowych gry)
-		System.out.println("static long white1 =\t0b" + printBits(state[0]) + "L;");
-		System.out.println("static long white2 =\t0b" + printBits(state[1]) + "L;");
-		System.out.println("static long black1 =\t0b" + printBits(state[2]) + "L;");
-		System.out.println("static long black2 =\t0b" + printBits(state[3]) + "L;");
+//		System.out.println("static long white1 =\t0b" + printBits(state[0]) + "L;");
+//		System.out.println("static long white2 =\t0b" + printBits(state[1]) + "L;");
+//		System.out.println("static long black1 =\t0b" + printBits(state[2]) + "L;");
+//		System.out.println("static long black2 =\t0b" + printBits(state[3]) + "L;");
 		System.out.print(sep + " ");
 		for (byte x = 0; x < 8; x++)
 			System.out.print(x + sep);
