@@ -120,7 +120,7 @@ public class Checkers {
 								if (isEmpty((byte) (10 * x + y))) {
 									x -= xDir[dir];
 									y -= yDir[dir];
-									result += pos + " ";
+									result += (pos < 10) ? "0" + pos + " " : pos + " ";
 									cond = false;
 								}
 							}
@@ -637,7 +637,7 @@ public class Checkers {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			if (ab.equalsIgnoreCase("koniec") || ab.length() == 0) {
+			if (ab.equalsIgnoreCase("koniec") || ab.trim().length() == 0) {
 				if (!moves)
 					color = "białe";
 				else
