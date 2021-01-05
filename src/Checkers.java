@@ -638,11 +638,11 @@ public class Checkers {
 				e.printStackTrace();
 			}
 			ab = ab.replaceAll("[^0-9]+", "");
-			if (ab.equalsIgnoreCase("koniec") || ab.trim().length() == 0) {
-				if (!moves)
-					color = "białe";
-				else
+			if (ab.trim().length() == 0) {
+				if (moves)
 					color = "czarne";
+				else
+					color = "białe";
 				System.out.println("Dziękujemy za grę, wygrały " + color);
 				System.exit(0);
 			}
