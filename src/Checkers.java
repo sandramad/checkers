@@ -8,10 +8,10 @@ public class Checkers {
 	 * 1 white b7 - piece, 0 pawn, 1 dame b8 - state, 0 captured, 1 in game
 	 *************************************/
 	// ułożenie startowe
-	long white1 = 0b101001011101001001101000110101000100101000010101000000L;
-	long white2 = 0b101010110101010100101010010101010000101001111101001101L;
-	long black1 = 0b100110010100110000100101111100101101100101011100101001L;
-	long black2 = 0b100111111100111101100111011100111001100110110100110100L;
+	long white1 = 0b101001011_101001001_101000110_101000100_101000010_101000000L;
+	long white2 = 0b101010110_101010100_101010010_101010000_101001111_101001101L;
+	long black1 = 0b100110010_100110000_100101111_100101101_100101011_100101001L;
+	long black2 = 0b100111111_100111101_100111011_100111001_100110110_100110100L;
 
 	// poruszanie się damki
 //	long white1 = 0b001101001_001100100_101000110_001001011_001001001_001001001L;
@@ -645,45 +645,50 @@ public class Checkers {
 				System.out.println("Dziękujemy za grę, wygrały " + color);
 				System.exit(0);
 			}
-			byte b = 0;
-			ab = ab.replaceAll("d", "");
-			ab = ab.replaceAll("D", "");
-			ab = ab.replaceAll("--", "-");
-			if (ab.length() == 4)
-				b = Byte.parseByte(ab.substring(2, 4));
-			else
-				b = Byte.parseByte(ab.substring(3, 5));
-			byte a = Byte.parseByte(ab.substring(0, 2));
+			if (ab.length() < 4)
+				System.out.println("Podaj obie pozycje");
+			else {
+				byte b = 0;
+				ab = ab.replaceAll("d", "");
+				ab = ab.replaceAll("D", "");
+				ab = ab.replaceAll("--", "-");
+				if (ab.length() == 4)
+					b = Byte.parseByte(ab.substring(2, 4));
+				else
+					b = Byte.parseByte(ab.substring(3, 5));
+				byte a = Byte.parseByte(ab.substring(0, 2));
 
-			if (checkers.isCapture(moves).length() > 2) {
-				captured = false;
-				String[] must = checkers.isCapture(moves).substring(0, (checkers.isCapture(moves).length() - 1))
-						.split(" ");
-				for (byte i = 0; i < must.length && captured == false; i++)
-					if (a == Byte.parseByte(must[i]) && Math.abs(a - b) > 16)
-						captured = true;
-			}
-			if (checkers.validateMove(a, b, moves) && captured == true) {
-				System.out.print("Ruch " + color + " z pola X: " + (a / 10) + "  Y: " + (a % 10));
-				System.out.println("\tna pole X: " + (b / 10) + "  Y: " + (b % 10));
+				if (checkers.isCapture(moves).length() > 2) {
+					captured = false;
+					String[] must = checkers.isCapture(moves).substring(0, (checkers.isCapture(moves).length() - 1))
+							.split(" ");
+					for (byte i = 0; i < must.length && captured == false; i++)
+						if (a == Byte.parseByte(must[i]) && Math.abs(a - b) > 16)
+							captured = true;
+				}
+				if (checkers.validateMove(a, b, moves) && captured == true) {
+					System.out.print("Ruch " + color + " z pola X: " + (a / 10) + "  Y: " + (a % 10));
+					System.out.println("\tna pole X: " + (b / 10) + "  Y: " + (b % 10));
 
-				checkers.updatePosition(checkers.getN(a, moves), b);
-				if ((moves && (b % 10 == 7)) || (!moves && (b % 10 == 0)) && !checkers.isDame(checkers.getN(a, moves)))
-					checkers.updateDame(checkers.getN(b, moves));
-				checkers.drawBoard();
-				if (checkers.isCapture(!moves).length() > 3)
-					System.out.println("Możliwe bicia na polach: " + checkers.isCapture(!moves));
-				if (checkers.isCapture(!moves).length() == 3)
-					System.out.println("Możliwe bicie na polu: " + checkers.isCapture(!moves));
-				moves = !moves;
-			} else if (checkers.isCapture(moves).length() > 2)
-				System.out.println("Bicia są obowiązkowe");
-			checkers.isCapture(moves);
-			if (checkers.end(!moves)) {
-				color = (!moves) ? "białe" : "czarne";
-				String name = (!moves) ? nameW : nameK;
-				System.out.println("Gratuluję " + name + ", wygrały " + color + "!\nDziękuję za grę.");
-				System.exit(0);
+					checkers.updatePosition(checkers.getN(a, moves), b);
+					if ((moves && (b % 10 == 7))
+							|| (!moves && (b % 10 == 0)) && !checkers.isDame(checkers.getN(a, moves)))
+						checkers.updateDame(checkers.getN(b, moves));
+					checkers.drawBoard();
+					if (checkers.isCapture(!moves).length() > 3)
+						System.out.println("Możliwe bicia na polach: " + checkers.isCapture(!moves));
+					if (checkers.isCapture(!moves).length() == 3)
+						System.out.println("Możliwe bicie na polu: " + checkers.isCapture(!moves));
+					moves = !moves;
+				} else if (checkers.isCapture(moves).length() > 2)
+					System.out.println("Bicia są obowiązkowe");
+				checkers.isCapture(moves);
+				if (checkers.end(!moves)) {
+					color = (!moves) ? "białe" : "czarne";
+					String name = (!moves) ? nameW : nameK;
+					System.out.println("Gratuluję " + name + ", wygrały " + color + "!\nDziękuję za grę.");
+					System.exit(0);
+				}
 			}
 		} // end while
 	}// end Main
