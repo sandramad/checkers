@@ -637,6 +637,7 @@ public class Checkers {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			ab = ab.replaceAll("[^0-9]+", "");
 			if (ab.equalsIgnoreCase("koniec") || ab.trim().length() == 0) {
 				if (!moves)
 					color = "białe";
@@ -648,15 +649,8 @@ public class Checkers {
 			if (ab.length() < 4)
 				System.out.println("Podaj obie pozycje");
 			else {
-				byte b = 0;
-				ab = ab.replaceAll("d", "");
-				ab = ab.replaceAll("D", "");
-				ab = ab.replaceAll("--", "-");
-				if (ab.length() == 4)
-					b = Byte.parseByte(ab.substring(2, 4));
-				else
-					b = Byte.parseByte(ab.substring(3, 5));
 				byte a = Byte.parseByte(ab.substring(0, 2));
+				byte b = Byte.parseByte(ab.substring(2, 4));
 
 				if (checkers.isCapture(moves).length() > 2) {
 					captured = false;
