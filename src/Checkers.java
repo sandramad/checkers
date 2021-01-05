@@ -676,7 +676,7 @@ public class Checkers {
 				if (checkers.isCapture(!moves).length() == 3)
 					System.out.println("Możliwe bicie na polu: " + checkers.isCapture(!moves));
 				moves = !moves;
-			} else if (checkers.isCapture(!moves).length() > 2)
+			} else if (checkers.isCapture(moves).length() > 2)
 				System.out.println("Bicia są obowiązkowe");
 			checkers.isCapture(moves);
 			if (checkers.end(!moves)) {
