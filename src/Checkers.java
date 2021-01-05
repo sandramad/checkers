@@ -170,9 +170,9 @@ public class Checkers {
 						}
 					}
 					if (n == 24)
-						System.out.print(sqW + sep); // przeszedł po wszystkich n i nie znalazł pionka
+						System.out.print(sqK + sep); // przeszedł po wszystkich n i nie znalazł pionka
 				} else
-					System.out.print(sqK + sep);
+					System.out.print(sqW + sep);
 			}
 			System.out.println(y);
 		}
@@ -520,7 +520,7 @@ public class Checkers {
 					err = true;
 				}
 				if (((a / 10) + (a % 10)) % 2 == 1) {
-					System.out.println("ERR: Pole startowe jest czarne \t " + a);
+					System.out.println("ERR: Pole startowe jest białe \t " + a);
 					err = true;
 				}
 				if (b / 10 < 0) {
@@ -538,7 +538,7 @@ public class Checkers {
 					err = true;
 				}
 				if (((b / 10) + (b % 10)) % 2 == 1) {
-					System.out.println("ERR: Pole docelowe jest czarne \t " + b);
+					System.out.println("ERR: Pole docelowe jest białe \t " + b);
 					err = true;
 				}
 
