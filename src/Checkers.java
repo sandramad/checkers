@@ -639,12 +639,22 @@ public class Checkers {
 			}
 			ab = ab.replaceAll("[^0-9]+", "");
 			if (ab.trim().length() == 0) {
-				if (moves)
-					color = "czarne";
-				else
-					color = "białe";
-				System.out.println("Dziękujemy za grę, wygrały " + color);
-				System.exit(0);
+				System.out.println("Czy na pewno chcesz zakończyć grę?\n(jeśli nie, podaj parę współrzędnych)");
+				try {
+					ab = sc.readLine();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+				ab = ab.replaceAll("[^0-9]+", "");
+				if (ab.trim().length() == 0) {
+					if (moves)
+						color = "czarne";
+					else
+						color = "białe";
+					System.out.println("Dziękujemy za grę, wygrały " + color);
+					System.exit(0);
+				}
 			}
 			if (ab.length() < 4)
 				System.out.println("Podaj obie pozycje");
