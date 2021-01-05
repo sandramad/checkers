@@ -639,13 +639,7 @@ public class Checkers {
 			}
 			ab = ab.replaceAll("[^0-9]+", "");
 			if (ab.trim().length() == 0) {
-<<<<<<< HEAD
 				if (moves)
-=======
-				if (!moves)
-					color = "białe";
-				else
->>>>>>> 55ee027533d0a20390cb7173d0aafafa22cded04
 					color = "czarne";
 				else
 					color = "białe";
