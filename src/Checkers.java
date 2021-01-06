@@ -1,6 +1,4 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.util.Scanner;
 
 public class Checkers {
 	/*************************************
@@ -602,19 +600,11 @@ public class Checkers {
 		boolean captured = true;
 		String color = "";
 
-		BufferedReader sc = new BufferedReader(new InputStreamReader(System.in));
+		Scanner sc = new Scanner(System.in);
 		System.out.println("Wpisz kto gra białymi:");
-		try {
-			nameW = sc.readLine();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+		nameW = sc.nextLine();
 		System.out.println("Wpisz kto gra czarnymi:");
-		try {
-			nameK = sc.readLine();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		nameK = sc.nextLine();
 		nameW = (nameW.charAt(0) + "").toUpperCase() + nameW.substring(1).toLowerCase();
 		nameK = (nameK.charAt(0) + "").toUpperCase() + nameK.substring(1).toLowerCase();
 		System.out.println(nameW + " gra " + checkers.pwnW + " i rozpoczyna rozgrywkę");
@@ -632,22 +622,15 @@ public class Checkers {
 			}
 			System.out.print(", wpisz parę: ");
 			String ab = null;
-			try {
-				ab = sc.readLine();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			ab = sc.nextLine();
+			ab = ab.replaceAll("[ ]+", "0");
 			ab = ab.replaceAll("[^0-9]+", "");
-			if (ab.trim().length() == 0) {
+			if (ab.length() == 0 || ab.equals("0")) {
 				System.out.println("Czy na pewno chcesz zakończyć grę?\n(jeśli nie, podaj parę współrzędnych)");
-				try {
-					ab = sc.readLine();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				ab = sc.nextLine();
 
 				ab = ab.replaceAll("[^0-9]+", "");
-				if (ab.trim().length() == 0) {
+				if (ab.length() == 0 || ab.equals("0")) {
 					if (moves)
 						color = "czarne";
 					else
