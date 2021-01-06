@@ -610,8 +610,8 @@ public class Checkers {
 		System.out.println(nameW + " gra " + checkers.pwnW + " i rozpoczyna rozgrywkę");
 		System.out.println(nameK + " gra " + checkers.pwnK + "\nPowodzenia!");
 		checkers.drawBoard();
-		System.out.println(
-				"Pozycję podawaj parami współrzędnych - z jakiej pozycji chcesz się ruszyć na jaką np. \"02-13\"");
+		System.out.println("Gra rozgrywa się an białych polach\n"
+				+ "Pozycję podawaj parami współrzędnych - z jakiej pozycji chcesz się ruszyć na jaką np. \"02-13\"");
 		while (game) {
 			if (moves) {
 				System.out.print("Ruch " + nameW);
