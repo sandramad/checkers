@@ -628,7 +628,6 @@ public class Checkers {
 			if (ab.length() == 0 || ab.equals("0")) {
 				System.out.println("Czy na pewno chcesz zakończyć grę?\n(jeśli nie, podaj parę współrzędnych)");
 				ab = sc.nextLine();
-
 				ab = ab.replaceAll("[^0-9]+", "");
 				if (ab.length() == 0 || ab.equals("0")) {
 					if (moves)
@@ -678,5 +677,6 @@ public class Checkers {
 				}
 			}
 		} // end while
+		sc.close();
 	}// end Main
 } // end Checkers
