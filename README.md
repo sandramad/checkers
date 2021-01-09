@@ -6,4 +6,4 @@ c. gra rozgrywa się na białych polach<br />
 d. bicia obowiązkowe, ale kolejność dowolna<br />
 e. rozpoczynają białe<br />
 f. królówka ma długie ruchy<br />
-g. zasady są ogólnie jak w warcabach polskich (poza tym, że gra się odbywa na białych polach i nie jest wymagane najdłuższe bicie)
+g. zasady są ogólnie jak w warcabach polskich<br />(poza tym, że gra się odbywa na białych polach i nie jest wymagane najdłuższe bicie)
