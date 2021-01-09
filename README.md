@@ -1,4 +1,4 @@
-# warcaby
+# Warcaby
 Założenia gry:<br />
 a. 2 zmienne typu long na gracza (w jednym longu zakodowane 6 pionków)<br />
 b. plansza 64 polowa (wielkość 8x8)<br />
