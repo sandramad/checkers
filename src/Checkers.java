@@ -6,16 +6,16 @@ public class Checkers {
 	 * 1 white b7 - piece, 0 pawn, 1 dame b8 - state, 0 captured, 1 in game
 	 *************************************/
 	// ułożenie startowe
-	long white1 = 0b101001011_101001001_101000110_101000100_101000010_101000000L;
-	long white2 = 0b101010110_101010100_101010010_101010000_101001111_101001101L;
-	long black1 = 0b100110010_100110000_100101111_100101101_100101011_100101001L;
-	long black2 = 0b100111111_100111101_100111011_100111001_100110110_100110100L;
+//	long white1 = 0b101001011_101001001_101000110_101000100_101000010_101000000L;
+//	long white2 = 0b101010110_101010100_101010010_101010000_101001111_101001101L;
+//	long black1 = 0b100110010_100110000_100101111_100101101_100101011_100101001L;
+//	long black2 = 0b100111111_100111101_100111011_100111001_100110110_100110100L;
 
 	// poruszanie się damki
-//	long white1 = 0b001101001_001100100_101000110_001001011_001001001_001001001L;
-//	long white2 = 0b001011101_001100010_001011001_001101011_001101011_001011011L;
-//	long black1 = 0b000010110_100010100_100101111_000100100_000100010_000011011L;
-//	long black2 = 0b100101101_100111101_100111011_100111001_000011011_010010100L;
+	long white1 = 0b101000000_001100100_101000110_001001011_001001001_001001001L;
+	long white2 = 0b001011101_001100010_001011001_001101011_001101011_001011011L;
+	long black1 = 0b000010110_100010100_100101111_000100100_000100010_000011011L;
+	long black2 = 0b100101101_100111101_100111011_100111001_000011011_010010100L;
 
 	// koniec gry
 //	long white1 = 0b001011011_001011001_001010100_001001011_001001001_001001001L;
@@ -393,7 +393,7 @@ public class Checkers {
 					if (isEmpty(Byte.parseByte(xEnd + "" + yEnd))) {
 						if (b == (byte) (xEmpty * 10 + yEmpty)) {
 							updateCaptured(getN(iTmp));
-							if (dameCapture((byte) (xEmpty * 10 + yEmpty), moves).length() > 0) {
+							if (dameCapture((byte) (xEmpty * 10 + yEmpty), moves).length() >= 0) {
 								updatePosition(getN(a, moves), b);
 								drawBoard();
 								System.out.println(
@@ -427,7 +427,7 @@ public class Checkers {
 					if (isEmpty((byte) (xEmpty * 10 + yEmpty))) {
 						if (b == (byte) (xEmpty * 10 + yEmpty)) {
 							updateCaptured(getN(iTmp));
-							if (dameCapture((byte) (xEmpty * 10 + yEmpty), moves).length() > 0) {
+							if (dameCapture((byte) (xEmpty * 10 + yEmpty), moves).length() >= 0) {
 								updatePosition(getN(a, moves), b);
 								drawBoard();
 								System.out.println(
